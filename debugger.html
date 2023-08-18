@@ -1,0 +1,293 @@
+<html>
+
+<head>
+  <title>Wheredabus Inc</title>
+  <link rel="icon" type="image/png" href="./favicon.png">
+  <link rel="stylesheet" type="text/css" href="./style.css" />
+  <script type="module" src="./index.js"></script>
+</head>
+
+<body>
+  <h1>Wheredabus Vehicle Position Visualizer</h1>
+  <div>
+    <textarea id="json_ta" rows="10">
+      {"tag": "8269", "title": "Queen St West At Augusta Ave", "lat": 43.6479499, "lng": -79.39987, "stopId": "6826", "dirName": "East", "dirNum": 4, "routeTag": "501"}
+      {"tag": "10294", "title": "Queen St West At Spadina Ave", "lat": 43.64859, "lng": -79.3966899, "stopId": "6853", "dirName": "East", "dirNum": 4, "routeTag": "501"}
+      {"tag": "7060", "title": "Queen St West At Peter St", "lat": 43.6492199, "lng": -79.39377, "stopId": "6829", "dirName": "East", "dirNum": 4, "routeTag": "501"}
+      {"tag": "6319", "title": "Queen St West At John St", "lat": 43.64976, "lng": -79.3911899, "stopId": "6841", "dirName": "East", "dirNum": 4, "routeTag": "501"}
+      {"tag": "7321", "title": "Queen St West At University Ave - Osgoode Station", "lat": 43.6506799, "lng": -79.38693, "stopId": "6858", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "9183", "title": "Queen St West At York St", "lat": 43.6510699, "lng": -79.38509, "stopId": "3091", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "3575", "title": "Queen St West At Bay St", "lat": 43.6517099, "lng": -79.38215, "stopId": "3082", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "6347", "title": "Bay St At Adelaide St West", "lat": 43.65, "lng": -79.38091, "stopId": "0232", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "23887", "title": "King St West At Bay St East Side", "lat": 43.6487199, "lng": -79.37962, "stopId": "15640", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "23885", "title": "King St West At Yonge St East Side - King Station", "lat": 43.6492299, "lng": -79.37726, "stopId": "15638", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "23909", "title": "Church St At King St East", "lat": 43.6503599, "lng": -79.3744999, "stopId": "15668", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "412", "title": "Church St At Lombard St North Side", "lat": 43.6521399, "lng": -79.3752299, "stopId": "14314", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "24601", "title": "Church St At Queen St East", "lat": 43.6530599, "lng": -79.3756099, "stopId": "12314", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "8082", "title": "Queen St East At Jarvis St", "lat": 43.6535999, "lng": -79.37338, "stopId": "3050", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "4584", "title": "Queen St East At Sherbourne St", "lat": 43.65442, "lng": -79.3695499, "stopId": "3070", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "7480", "title": "Queen St East At Ontario St", "lat": 43.6549099, "lng": -79.36726, "stopId": "3060", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "1300", "title": "Queen St East At Parliament St", "lat": 43.6554699, "lng": -79.36468, "stopId": "3064", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "5087", "title": "Queen St East At Sackville St", "lat": 43.6560999, "lng": -79.36187, "stopId": "3068", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "10054", "title": "Queen St East At Sumach St", "lat": 43.65674, "lng": -79.3590099, "stopId": "3073", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "1301", "title": "Queen St East At River St", "lat": 43.65726, "lng": -79.3566699, "stopId": "3066", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "6678", "title": "Queen St East At Carroll St", "lat": 43.6581999, "lng": -79.35245, "stopId": "3038", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "1966", "title": "Broadview Ave At Dundas St East", "lat": 43.6622499, "lng": -79.35117, "stopId": "3372", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "3886", "title": "Broadview Ave At Mountstephen St", "lat": 43.66394, "lng": -79.35187, "stopId": "9317", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "8991_ar", "title": "Gerrard St East At St Matthews Rd", "lat": 43.6649699, "lng": -79.3549, "stopId": null, "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "15127", "title": "Queen St East At Woodfield Rd", "lat": 43.6651399, "lng": -79.32153, "stopId": "15336", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "779", "title": "Queen St East At Coxwell Ave", "lat": 43.6661899, "lng": -79.31679, "stopId": "4557", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "489", "title": "Queen St East At Kingston Rd", "lat": 43.6670299, "lng": -79.31295, "stopId": "11845", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "1260", "title": "Queen St East At Sarah Ashbridge Ave", "lat": 43.6678899, "lng": -79.3093, "stopId": "6810", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "4342", "title": "Queen St East At Woodbine Ave", "lat": 43.66864, "lng": -79.3059399, "stopId": "6824", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "15133", "title": "Queen St East At Elmer Ave", "lat": 43.66916, "lng": -79.3036399, "stopId": "15342", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "15129", "title": "Queen St East At Bellefair Ave", "lat": 43.66999, "lng": -79.2999199, "stopId": "15338", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "4425", "title": "Queen St East At Wineva Ave", "lat": 43.67085, "lng": -79.2959299, "stopId": "6821", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "15135", "title": "Queen St East At Glen Manor Dr", "lat": 43.67149, "lng": -79.2928199, "stopId": "15344", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "10371", "title": "Queen St East At Beech Ave", "lat": 43.6725599, "lng": -79.28769, "stopId": "6801", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "4598", "title": "Queen St East At Silver Birch Ave", "lat": 43.67304, "lng": -79.2853399, "stopId": "10158", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "4364", "title": "Queen St East At Neville Park Blvd", "lat": 43.6736199, "lng": -79.28253, "stopId": "11683", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "477", "title": "Long Branch Loop", "lat": 43.5921099, "lng": -79.5437, "stopId": "4435", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "1073", "title": "Lake Shore Blvd West At Thirty Seventh St", "lat": 43.59333, "lng": -79.5383499, "stopId": "5164", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "4736", "title": "Lake Shore Blvd West At Long Branch Ave", "lat": 43.5942999, "lng": -79.53413, "stopId": "5187", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "1719", "title": "Lake Shore Blvd West At Thirty First St", "lat": 43.5951599, "lng": -79.53041, "stopId": "5163", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "1233", "title": "Lake Shore Blvd West At Twenty Eighth St", "lat": 43.59569, "lng": -79.5276999, "stopId": "5160", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "2957", "title": "Lake Shore Blvd West At Twenty Seventh St", "lat": 43.59633, "lng": -79.5250399, "stopId": "5159", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "4779", "title": "Lake Shore Blvd West At Twenty Second St", "lat": 43.59712, "lng": -79.5214099, "stopId": "5157", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "7984", "title": "Lake Shore Blvd West At Colonel Samuel Smith Park Dr", "lat": 43.5980499, "lng": -79.51718, "stopId": "5182", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "5479", "title": "Lake Shore Blvd West At Thirteenth St", "lat": 43.5992099, "lng": -79.51196, "stopId": "5152", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "5050", "title": "Lake Shore Blvd West At Tenth St", "lat": 43.5998799, "lng": -79.5088, "stopId": "5150", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "3370", "title": "Lake Shore Blvd West At Seventh St", "lat": 43.6006399, "lng": -79.50539, "stopId": "5172", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "7245", "title": "Lake Shore Blvd West At Fifth St", "lat": 43.6011499, "lng": -79.50311, "stopId": "5170", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "7612", "title": "Lake Shore Blvd West At Third St", "lat": 43.6016499, "lng": -79.50087, "stopId": "5167", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "6435", "title": "Lake Shore Blvd West At First St", "lat": 43.6021399, "lng": -79.49859, "stopId": "13946", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "7847", "title": "Lake Shore Blvd West At Royal York Rd", "lat": 43.6034999, "lng": -79.49324, "stopId": "5197", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "1299", "title": "Lake Shore Blvd West At Miles Rd", "lat": 43.6079899, "lng": -79.49026, "stopId": "5191", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "8173", "title": "Lake Shore Blvd West At Norris Cres", "lat": 43.6106999, "lng": -79.48998, "stopId": "5194", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "2173", "title": "Lake Shore Blvd West At Mimico Ave", "lat": 43.61354, "lng": -79.4893099, "stopId": "5192", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "5516", "title": "Lake Shore Blvd West At Superior Ave", "lat": 43.61482, "lng": -79.4886199, "stopId": "5201", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "8764", "title": "Lake Shore Blvd West At Burlington St", "lat": 43.6171499, "lng": -79.48728, "stopId": "5173", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "10217", "title": "Lake Shore Blvd West At Louisa St", "lat": 43.6187899, "lng": -79.48647, "stopId": "5189", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "5692", "title": "Lake Shore Blvd West At Legion Rd", "lat": 43.6203699, "lng": -79.48341, "stopId": "5185", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "9453", "title": "Lake Shore Blvd West At Park Lawn Rd", "lat": 43.6227799, "lng": -79.48131, "stopId": "5195", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "2061", "title": "2155 Lake Shore Blvd West", "lat": 43.6257099, "lng": -79.47974, "stopId": "5175", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "9423", "title": "2111 Lake Shore Blvd West", "lat": 43.6290699, "lng": -79.47815, "stopId": "5199", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "10266", "title": "The Queensway At Windermere Ave East Side", "lat": 43.6372599, "lng": -79.4692, "stopId": "14282", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "6256", "title": "The Queensway At Ellis Ave East Side", "lat": 43.63793, "lng": -79.4656799, "stopId": "14281", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "8901", "title": "The Queensway At Colborne Lodge Dr East Side", "lat": 43.63957, "lng": -79.4586299, "stopId": "14280", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "8941", "title": "The Queensway At Glendale Ave East Side - St Joseph'S Health Centre", "lat": 43.6391699, "lng": -79.4507699, "stopId": "6888", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "4321", "title": "The Queensway At Roncesvalles Ave", "lat": 43.63857, "lng": -79.44646, "stopId": "6912", "dirName": "East", "dirNum": 4, "routeTag": "501"}
+      {"tag": "15132", "title": "Queen St West At Triller Ave", "lat": 43.6390899, "lng": -79.44387, "stopId": "15341", "dirName": "East", "dirNum": 5, "routeTag": "501"}
+      {"tag": "7830", "title": "Queen St West At Beaty Ave", "lat": 43.6395999, "lng": -79.44127, "stopId": "10152", "dirName": "East", "dirNum": 5, "routeTag": "501"}
+      {"tag": "10323", "title": "Queen St West At Jameson Ave", "lat": 43.64039, "lng": -79.4375199, "stopId": "6840", "dirName": "East", "dirNum": 5, "routeTag": "501"}
+      {"tag": "2136", "title": "Queen St West At Dunn Ave", "lat": 43.64092, "lng": -79.4346599, "stopId": "6835", "dirName": "East", "dirNum": 5, "routeTag": "501"}
+      {"tag": "9607", "title": "Queen St West At Brock Ave", "lat": 43.6413899, "lng": -79.43241, "stopId": "6836", "dirName": "East", "dirNum": 5, "routeTag": "501"}
+      {"tag": "9255", "title": "Queen St West At Dufferin St", "lat": 43.6421199, "lng": -79.42879, "stopId": "6834", "dirName": "East", "dirNum": 5, "routeTag": "501"}
+      {"tag": "15139", "title": "Queen St West At Sudbury St", "lat": 43.6423999, "lng": -79.42734, "stopId": "15348", "dirName": "East", "dirNum": 4, "routeTag": "501"}
+      {"tag": "5899", "title": "Queen St West At Abell St", "lat": 43.6429799, "lng": -79.42447, "stopId": "6825", "dirName": "East", "dirNum": 4, "routeTag": "501"}
+      {"tag": "8263", "title": "Queen St West At Dovercourt Rd", "lat": 43.6433899, "lng": -79.42253, "stopId": "6831", "dirName": "East", "dirNum": 4, "routeTag": "501"}
+      {"tag": "9093", "title": "Queen St West At Ossington Ave", "lat": 43.64406, "lng": -79.4189799, "stopId": "6846", "dirName": "East", "dirNum": 4, "routeTag": "501"}
+      {"tag": "2140", "title": "Queen St West At Shaw St", "lat": 43.6445599, "lng": -79.41651, "stopId": "6850", "dirName": "East", "dirNum": 4, "routeTag": "501"}
+      {"tag": "5704", "title": "Shaw St At Adelaide St West", "lat": 43.6426999, "lng": -79.41559, "stopId": "11691", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "2217", "title": "King St West At Sudbury St", "lat": 43.64106, "lng": -79.4171799, "stopId": "11021", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "5091", "title": "King St West At Jefferson Ave", "lat": 43.64007, "lng": -79.4220799, "stopId": "4175", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "10438", "title": "King St West At Joe Shuster Way", "lat": 43.6397999, "lng": -79.42341, "stopId": "14400", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "4341", "title": "King St West At Dufferin St", "lat": 43.6390899, "lng": -79.427, "stopId": "4166", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "4698_ar", "title": "Dufferin St At Melbourne Ave", "lat": 43.6401899, "lng": -79.42773, "stopId": null, "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "5250", "title": "Queen St West At Strachan Ave", "lat": 43.64524, "lng": -79.4133099, "stopId": "6854", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "3896", "title": "Queen St West At Niagara St", "lat": 43.6458999, "lng": -79.41001, "stopId": "6844", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "3399", "title": "Queen St West At Tecumseth St", "lat": 43.64657, "lng": -79.4067199, "stopId": "6856", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "4514", "title": "Queen St West At Bathurst St", "lat": 43.6470799, "lng": -79.40418, "stopId": "6827", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "7837", "title": "McCaul St At Stephanie St", "lat": 43.6512599, "lng": -79.39007, "stopId": "2870", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "24613", "title": "McCaul St At Dundas St West", "lat": 43.6541499, "lng": -79.3912599, "stopId": "16358", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "7311", "title": "Dundas St West At University Ave - St Patrick Station", "lat": 43.65468, "lng": -79.38874, "stopId": "2193", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "6459", "title": "Dundas St West At Chestnut St", "lat": 43.6551399, "lng": -79.38613, "stopId": "2153", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "2856", "title": "Dundas St West At Bay St", "lat": 43.6555799, "lng": -79.38401, "stopId": "2142", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "3874", "title": "Dundas St West At Yonge St - Dundas Station", "lat": 43.65619, "lng": -79.3811899, "stopId": "2197", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "3471", "title": "Dundas St East At Church St", "lat": 43.6563699, "lng": -79.37736, "stopId": "2116", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "3184", "title": "Dundas St East At Jarvis St", "lat": 43.6569499, "lng": -79.37471, "stopId": "2118", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "2641", "title": "Dundas St East At Sherbourne St", "lat": 43.65822, "lng": -79.3713, "stopId": "2130", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "2749", "title": "Dundas St East At Ontario St", "lat": 43.65875, "lng": -79.3686499, "stopId": "2122", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "5988", "title": "Dundas St East At Parliament St", "lat": 43.6592799, "lng": -79.36629, "stopId": "2124", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "24274", "title": "Dundas St East At Regent Park Blvd", "lat": 43.6602499, "lng": -79.36197, "stopId": "15872", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "6694", "title": "Dundas St East At River St", "lat": 43.6610899, "lng": -79.35829, "stopId": "2126", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "8632", "title": "Dundas St East At Munro St", "lat": 43.6619399, "lng": -79.35314, "stopId": "2120", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "8820", "title": "Dundas St East At Broadview Ave", "lat": 43.66225, "lng": -79.3518099, "stopId": "2115", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "4041", "title": "Broadview Ave At Queen St East", "lat": 43.6591099, "lng": -79.3500199, "stopId": "3374", "dirName": "East", "dirNum": 2, "routeTag": "501"}
+      {"tag": "7665", "title": "Queen St East At Saulter St East Side", "lat": 43.6593999, "lng": -79.3471, "stopId": "3072", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "7234", "title": "Queen St East At Empire Ave", "lat": 43.65999, "lng": -79.3444999, "stopId": "3046", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "3836", "title": "Queen St East At Logan Ave", "lat": 43.66039, "lng": -79.3426799, "stopId": "3058", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "2338", "title": "Queen St East At Carlaw Ave", "lat": 43.6609499, "lng": -79.34021, "stopId": "3035", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "1944", "title": "Queen St East At Pape Ave", "lat": 43.66143, "lng": -79.3380699, "stopId": "3062", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "9938", "title": "Queen St East At Caroline Ave", "lat": 43.6620199, "lng": -79.33544, "stopId": "3037", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "1739", "title": "Queen St East At Jones Ave", "lat": 43.66258, "lng": -79.3329199, "stopId": "3030", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "4456", "title": "Queen St East At Leslie St", "lat": 43.6631399, "lng": -79.33038, "stopId": "3056", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "24057", "title": "Queen St East At Alton Ave", "lat": 43.6636499, "lng": -79.32811, "stopId": "15699", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "3060", "title": "Queen St East At Greenwood Ave", "lat": 43.66428, "lng": -79.3254899, "stopId": "3048", "dirName": "East", "dirNum": 3, "routeTag": "501"}
+      {"tag": "4236", "title": "The Queensway At Parkside Dr", "lat": 43.63967, "lng": -79.45392, "stopId": "6908", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "6108", "title": "Queen St West At Yonge St - Queen Station", "lat": 43.6522999, "lng": -79.37937, "stopId": "6861", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "2666", "title": "Queen St East At Victoria St - St Michaels Hospital", "lat": 43.6525599, "lng": -79.37822, "stopId": "3076", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "9691", "title": "Queen St East At Church St", "lat": 43.6530599, "lng": -79.37588, "stopId": "3040", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "3443", "title": "Queen St East At Broadview Ave", "lat": 43.6587499, "lng": -79.35006, "stopId": "3032", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "481", "title": "Sunnyside Loop", "lat": 43.6390499, "lng": -79.44835, "stopId": "11155", "dirName": "East", "dirNum": 1, "routeTag": "501"}
+      {"tag": "4143", "title": "Queen St East At Neville Park Blvd", "lat": 43.6739099, "lng": -79.28172, "stopId": "6813", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "3196", "title": "Queen St East At Silver Birch Ave", "lat": 43.6732599, "lng": -79.28497, "stopId": "6817", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "15138", "title": "Queen St East At Beech Ave", "lat": 43.67273, "lng": -79.2874499, "stopId": "15347", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "6992", "title": "Queen St East At Glen Manor Dr", "lat": 43.6717, "lng": -79.2924399, "stopId": "6804", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "10076", "title": "Queen St East At Wineva Ave", "lat": 43.6710999, "lng": -79.29533, "stopId": "6822", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "15130", "title": "Queen St East At Bellefair Ave", "lat": 43.6701499, "lng": -79.29974, "stopId": "15339", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "8746", "title": "Queen St East At Elmer Ave", "lat": 43.6693399, "lng": -79.30344, "stopId": "6803", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "15134", "title": "Queen St East At Woodbine Ave", "lat": 43.66884, "lng": -79.3056599, "stopId": "15343", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "4371", "title": "Queen St East At Lockwood Rd", "lat": 43.66811, "lng": -79.3089199, "stopId": "6811", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "9143", "title": "Queen St East At Kingston Rd", "lat": 43.6673999, "lng": -79.31214, "stopId": "6806", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "4034", "title": "Queen St East At Coxwell Ave", "lat": 43.6664299, "lng": -79.31645, "stopId": "3045", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "15128", "title": "Queen St East At Woodfield Rd", "lat": 43.6653499, "lng": -79.32117, "stopId": "15337", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "1189", "title": "Queen St East At Greenwood Ave", "lat": 43.6644499, "lng": -79.32518, "stopId": "3049", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "3385", "title": "Queen St East At Alton Ave", "lat": 43.6638799, "lng": -79.32769, "stopId": "3029", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "8882", "title": "Queen St East At Leslie St", "lat": 43.66333, "lng": -79.3301099, "stopId": "3057", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "746", "title": "Queen St East At Jones Ave", "lat": 43.6627799, "lng": -79.33257, "stopId": "3052", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "1744", "title": "Queen St East At Brooklyn Ave", "lat": 43.66207, "lng": -79.3358099, "stopId": "3034", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "2650", "title": "Queen St East At Pape Ave", "lat": 43.6616599, "lng": -79.33762, "stopId": "3063", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "3577", "title": "Queen St East At Carlaw Ave", "lat": 43.66114, "lng": -79.3399499, "stopId": "3036", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "6902", "title": "Queen St East At Logan Ave", "lat": 43.6606, "lng": -79.3423699, "stopId": "3059", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "6682", "title": "Queen St East At Empire Ave", "lat": 43.66022, "lng": -79.3440999, "stopId": "3047", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "3384", "title": "Queen St East At Boulton Ave", "lat": 43.6596599, "lng": -79.34655, "stopId": "3031", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "7385", "title": "Queen St East At Broadview Ave", "lat": 43.659, "lng": -79.3494999, "stopId": "3033", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "3446", "title": "Dundas St East At Munro St", "lat": 43.6621599, "lng": -79.35283, "stopId": "2121", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "1061", "title": "Dundas St East At River St", "lat": 43.66128, "lng": -79.3579999, "stopId": "2127", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "24273", "title": "Dundas St East At Regent Park Blvd", "lat": 43.66047, "lng": -79.3616499, "stopId": "15873", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "4155", "title": "Dundas St East At Parliament St", "lat": 43.65951, "lng": -79.3658799, "stopId": "2125", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "8277", "title": "Dundas St East At Ontario St", "lat": 43.6589599, "lng": -79.36836, "stopId": "2123", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "2704", "title": "Dundas St East At Sherbourne St", "lat": 43.6584099, "lng": -79.37088, "stopId": "2131", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "9060", "title": "Dundas St East At Jarvis St", "lat": 43.6571599, "lng": -79.37438, "stopId": "2119", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "3092", "title": "Dundas St East At Church St", "lat": 43.65658, "lng": -79.3769899, "stopId": "2117", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "6839", "title": "Dundas St East At Yonge St - Dundas Station", "lat": 43.6564299, "lng": -79.38075, "stopId": "2136", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "2261", "title": "Dundas St West At Bay St", "lat": 43.65585, "lng": -79.3834899, "stopId": "2143", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "7264", "title": "Dundas St West At Chestnut St", "lat": 43.6553399, "lng": -79.38587, "stopId": "2154", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "9824", "title": "Dundas St West At University Ave - St Patrick Station", "lat": 43.65492, "lng": -79.3878099, "stopId": "2194", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "24464", "title": "Dundas St West At St Patrick St", "lat": 43.6545699, "lng": -79.39014, "stopId": "16064", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "6087", "title": "Dundas St West At McCaul St", "lat": 43.6544099, "lng": -79.39121, "stopId": "2174", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "1520", "title": "McCaul St At Queen St West", "lat": 43.65033, "lng": -79.38984, "stopId": "2869", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "6851", "title": "Queen St West At John St", "lat": 43.6499499, "lng": -79.39095, "stopId": "3084", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "704", "title": "Queen St West At Soho St", "lat": 43.64947, "lng": -79.3932899, "stopId": "3087", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "1653", "title": "Queen St West At Spadina Ave", "lat": 43.64889, "lng": -79.3960599, "stopId": "3088", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "3624", "title": "Queen St West At Augusta Ave", "lat": 43.6481499, "lng": -79.39953, "stopId": "3080", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "10102", "title": "Queen St West At Bathurst St", "lat": 43.6473099, "lng": -79.4037, "stopId": "3081", "dirName": "West", "dirNum": 3, "routeTag": "501"}
+      {"tag": "7899", "title": "Queen St West At Palmerston Ave", "lat": 43.64676, "lng": -79.4064299, "stopId": "6848", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "8418", "title": "Queen St West At Claremont St", "lat": 43.64616, "lng": -79.4093999, "stopId": "6830", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "7639", "title": "Queen St West At Strachan Ave", "lat": 43.64542, "lng": -79.4130499, "stopId": "6855", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "8686", "title": "Queen St West At Shaw St", "lat": 43.6447899, "lng": -79.41615, "stopId": "6851", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "9071", "title": "Queen St West At Ossington Ave", "lat": 43.6442799, "lng": -79.41869, "stopId": "6847", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "9335", "title": "Queen St West At Dovercourt Rd", "lat": 43.6435699, "lng": -79.42223, "stopId": "6832", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "15686", "title": "Queen St West At Abell St", "lat": 43.6432, "lng": -79.4240899, "stopId": "15633", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "6528", "title": "Queen St West At Gladstone Ave", "lat": 43.64261, "lng": -79.4269999, "stopId": "6838", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "14701", "title": "Queen St West At Dufferin St West Side", "lat": 43.6421499, "lng": -79.42933, "stopId": "14977", "dirName": "West", "dirNum": 4, "routeTag": "501"}
+      {"tag": "7718", "title": "Queen St West At Brock Ave", "lat": 43.6415499, "lng": -79.43224, "stopId": "6839", "dirName": "West", "dirNum": 4, "routeTag": "501"}
+      {"tag": "1111", "title": "Queen St West At O'Hara Ave", "lat": 43.64117, "lng": -79.4340599, "stopId": "6845", "dirName": "West", "dirNum": 4, "routeTag": "501"}
+      {"tag": "5294", "title": "Queen St West At Lansdowne Ave", "lat": 43.6406899, "lng": -79.43646, "stopId": "6842", "dirName": "West", "dirNum": 4, "routeTag": "501"}
+      {"tag": "3798", "title": "Queen St West At Sorauren Ave", "lat": 43.6398199, "lng": -79.44078, "stopId": "6852", "dirName": "West", "dirNum": 4, "routeTag": "501"}
+      {"tag": "4692", "title": "Queen St West At Triller Ave", "lat": 43.63932, "lng": -79.4433799, "stopId": "6857", "dirName": "West", "dirNum": 4, "routeTag": "501"}
+      {"tag": "9459", "title": "Queen St West At Roncesvalles Ave", "lat": 43.6388599, "lng": -79.44577, "stopId": "6849", "dirName": "West", "dirNum": 4, "routeTag": "501"}
+      {"tag": "4698", "title": "Dufferin St At Melbourne Ave", "lat": 43.6401899, "lng": -79.42773, "stopId": "9739", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "6877", "title": "The Queensway At Glendale Ave - St Joseph'S Health Centre", "lat": 43.6392999, "lng": -79.45107, "stopId": "6889", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "10473", "title": "The Queensway At Colborne Lodge Dr West Side", "lat": 43.6394499, "lng": -79.4603, "stopId": "14393", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "10444", "title": "The Queensway At Ellis Ave West Side", "lat": 43.6376799, "lng": -79.46716, "stopId": "14394", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "24133", "title": "2155 Lake Shore Blvd West", "lat": 43.6261499, "lng": -79.47971, "stopId": "15746", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "6830", "title": "Lake Shore Blvd West At Park Lawn Rd West Side", "lat": 43.6225999, "lng": -79.48156, "stopId": "5196", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "5669", "title": "Lake Shore Blvd West At Legion Rd", "lat": 43.62062, "lng": -79.4831599, "stopId": "5186", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "8858", "title": "Lake Shore Blvd West At Louisa St", "lat": 43.6190499, "lng": -79.48645, "stopId": "5190", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "5667", "title": "Lake Shore Blvd West At Burlington St", "lat": 43.61745, "lng": -79.4873799, "stopId": "5174", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "2156", "title": "Lake Shore Blvd West At Superior Ave", "lat": 43.6150999, "lng": -79.48869, "stopId": "5202", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "9148", "title": "Lake Shore Blvd West At Mimico Ave", "lat": 43.6138599, "lng": -79.4893899, "stopId": "5193", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "3706", "title": "Lake Shore Blvd West At Hillside Ave", "lat": 43.6112699, "lng": -79.49014, "stopId": "5179", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "6466", "title": "Lake Shore Blvd West At Symons St", "lat": 43.60863, "lng": -79.4904499, "stopId": "5203", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "5230", "title": "Lake Shore Blvd West At Royal York Rd", "lat": 43.60382, "lng": -79.4930299, "stopId": "5198", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "10320", "title": "Lake Shore Blvd West At First St", "lat": 43.6023799, "lng": -79.49836, "stopId": "13947", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "1353", "title": "Lake Shore Blvd West At Third St", "lat": 43.6018799, "lng": -79.50064, "stopId": "5168", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "4223", "title": "Lake Shore Blvd West At Fifth St", "lat": 43.60139, "lng": -79.5028599, "stopId": "5171", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "6827", "title": "Lake Shore Blvd West At Islington Ave", "lat": 43.6009, "lng": -79.5050899, "stopId": "5180", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "1258", "title": "Lake Shore Blvd West At Tenth St", "lat": 43.60016, "lng": -79.5084999, "stopId": "5151", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "9222", "title": "Lake Shore Blvd West At Thirteenth St", "lat": 43.59945, "lng": -79.5117099, "stopId": "5153", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "1926", "title": "Lake Shore Blvd West At Fifteenth St", "lat": 43.5989699, "lng": -79.51386, "stopId": "5155", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "9382", "title": "Lake Shore Blvd West At Kipling Ave", "lat": 43.59833, "lng": -79.5167499, "stopId": "5181", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "1593", "title": "Lake Shore Blvd West At Twenty Second St", "lat": 43.5973399, "lng": -79.52125, "stopId": "5156", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "9317", "title": "Lake Shore Blvd West At Twenty Sixth St", "lat": 43.5966699, "lng": -79.52427, "stopId": "5158", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "6463", "title": "Lake Shore Blvd West At Twenty Ninth St", "lat": 43.59581, "lng": -79.5281799, "stopId": "5161", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "1737", "title": "Lake Shore Blvd West At Thirtieth St", "lat": 43.59547, "lng": -79.5296599, "stopId": "5162", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "5577", "title": "Lake Shore Blvd West At Long Branch Ave", "lat": 43.59469, "lng": -79.5330299, "stopId": "5188", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "8445", "title": "Lake Shore Blvd West At Thirty Seventh St", "lat": 43.5934899, "lng": -79.53798, "stopId": "5165", "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "477_ar", "title": "Long Branch Loop", "lat": 43.5921099, "lng": -79.5437, "stopId": null, "dirName": "West", "dirNum": 2, "routeTag": "501"}
+      {"tag": "8938", "title": "The Queensway At Parkside Dr", "lat": 43.6397499, "lng": -79.4541799, "stopId": "6909", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "8991", "title": "Gerrard St East At St Matthews Rd", "lat": 43.6649699, "lng": -79.3549, "stopId": "1108", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "24418", "title": "Gerrard St East At River St", "lat": 43.6639499, "lng": -79.35867, "stopId": "16031", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "8632_IB", "title": "Dundas St East At Munro St", "lat": 43.66194, "lng": -79.3531399, "stopId": "2120", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "8820_IB", "title": "Dundas St East At Broadview Ave", "lat": 43.6622499, "lng": -79.35181, "stopId": "2115", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "4041_IB", "title": "Broadview Ave At Queen St East", "lat": 43.65911, "lng": -79.35002, "stopId": "3374", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "1070", "title": "Queen St East At Carroll St", "lat": 43.6584199, "lng": -79.3521, "stopId": "3039", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "10272", "title": "Queen St East At River St", "lat": 43.6574499, "lng": -79.3564, "stopId": "3067", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "8731", "title": "Queen St East At Sumach St", "lat": 43.65692, "lng": -79.3588099, "stopId": "3074", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "7217", "title": "Queen St East At Sackville St", "lat": 43.6563499, "lng": -79.36135, "stopId": "3069", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "5599", "title": "Queen St East At Parliament St", "lat": 43.6556899, "lng": -79.36428, "stopId": "3065", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "7950", "title": "Queen St East At Ontario St", "lat": 43.6551599, "lng": -79.36682, "stopId": "3061", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "5706", "title": "Queen St East At Sherbourne St", "lat": 43.6546, "lng": -79.3693199, "stopId": "3071", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "9301", "title": "Queen St East At Jarvis St", "lat": 43.6538, "lng": -79.3730799, "stopId": "3051", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "6336", "title": "Church St At Richmond St East", "lat": 43.65264, "lng": -79.37562, "stopId": "0803", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "24604", "title": "Queen St East At Bay St West Side", "lat": 43.6518599, "lng": -79.38222, "stopId": "16354", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "4413", "title": "Queen St West At York St", "lat": 43.6512899, "lng": -79.38479, "stopId": "11794", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "2086", "title": "Queen St West At University Ave - Osgoode Station", "lat": 43.65097, "lng": -79.3862599, "stopId": "6859", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "15131", "title": "Queen St West At St Patrick St", "lat": 43.65048, "lng": -79.3884799, "stopId": "15340", "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "481_ar", "title": "Sunnyside Loop", "lat": 43.6390499, "lng": -79.44835, "stopId": null, "dirName": "West", "dirNum": 1, "routeTag": "501"}
+      {"tag": "14142", "title": "Bathurst Station At Bay 6", "lat": 43.6665299, "lng": -79.41129, "stopId": "14619", "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "15125", "title": "Bathurst St At Lennox St", "lat": 43.6639, "lng": -79.41081, "stopId": "15334", "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "8105", "title": "Bathurst St At Harbord St", "lat": 43.6616099, "lng": -79.4098899, "stopId": "0149", "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "6594", "title": "Bathurst St At Ulster St", "lat": 43.65987, "lng": -79.40919, "stopId": "0213", "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "10342", "title": "Bathurst St At College St", "lat": 43.65663, "lng": -79.40786, "stopId": "0111", "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "4389", "title": "Bathurst St At Nassau St - Toronto Western Hospital", "lat": 43.6543499, "lng": -79.40695, "stopId": "0178", "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "2181", "title": "Bathurst St At Dundas St West - Toronto Western Hospital", "lat": 43.65248, "lng": -79.40618, "stopId": "0127", "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "9662", "title": "Bathurst St At Robinson St", "lat": 43.6490999, "lng": -79.4048299, "stopId": "0193", "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "1068", "title": "Bathurst St At Queen St West", "lat": 43.64738, "lng": -79.40413, "stopId": "0187", "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "5469", "title": "Bathurst St At King St West", "lat": 43.6441399, "lng": -79.40283, "stopId": "0162", "dirName": "South", "dirNum": 4, "routeTag": "511"}
+      {"tag": "15049", "title": "Bathurst St At Niagara St", "lat": 43.6420299, "lng": -79.40198, "stopId": "15225", "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "7478", "title": "Bathurst St At Fort York Blvd", "lat": 43.63895, "lng": -79.40077, "stopId": "0100", "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "4439", "title": "Fleet St At Bathurst St West Side", "lat": 43.6364199, "lng": -79.40054, "stopId": "13362", "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "12891", "title": "Fleet St At Bastion St West Side", "lat": 43.6359699, "lng": -79.40415, "stopId": "14511", "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "12919", "title": "Fleet St At Fort York Blvd West Side", "lat": 43.6364199, "lng": -79.4073999, "stopId": "14509", "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "10399", "title": "Manitoba Dr At Strachan Ave West Side", "lat": 43.6362999, "lng": -79.4104099, "stopId": "1063", "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "15016", "title": "Exhibition Loop", "lat": 43.6358699, "lng": -79.41705, "stopId": "15190", "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "463_ar", "title": "Exhibition Loop", "lat": 43.6363299, "lng": -79.41537, "stopId": null, "dirName": "South", "dirNum": 3, "routeTag": "511"}
+      {"tag": "463", "title": "Exhibition Loop", "lat": 43.6363299, "lng": -79.41537, "stopId": "12584", "dirName": "North", "dirNum": 3, "routeTag": "511"}
+      {"tag": "7734", "title": "Fleet St At Strachan Ave", "lat": 43.63617, "lng": -79.41014, "stopId": "1062", "dirName": "North", "dirNum": 3, "routeTag": "511"}
+      {"tag": "12913", "title": "Fleet St At Fort York Blvd East Side", "lat": 43.63626, "lng": -79.40628, "stopId": "14508", "dirName": "North", "dirNum": 3, "routeTag": "511"}
+      {"tag": "12898", "title": "Fleet St At Bastion St", "lat": 43.63585, "lng": -79.40377, "stopId": "14512", "dirName": "North", "dirNum": 3, "routeTag": "511"}
+      {"tag": "632", "title": "Fleet St At Bathurst St", "lat": 43.6364699, "lng": -79.40013, "stopId": "10210", "dirName": "North", "dirNum": 3, "routeTag": "511"}
+      {"tag": "2380", "title": "Bathurst St At Fort York Blvd", "lat": 43.6386799, "lng": -79.40047, "stopId": "13672", "dirName": "North", "dirNum": 3, "routeTag": "511"}
+      {"tag": "15048", "title": "Bathurst St At Niagara St", "lat": 43.6417799, "lng": -79.4017499, "stopId": "15224", "dirName": "North", "dirNum": 3, "routeTag": "511"}
+      {"tag": "7197", "title": "Bathurst St At King St West", "lat": 43.6436599, "lng": -79.4025199, "stopId": "0161", "dirName": "North", "dirNum": 5, "routeTag": "511"}
+      {"tag": "5399", "title": "Bathurst St At Queen St West", "lat": 43.6470699, "lng": -79.4039, "stopId": "0186", "dirName": "North", "dirNum": 4, "routeTag": "511"}
+      {"tag": "15126", "title": "Bathurst St At Carr St", "lat": 43.6485999, "lng": -79.40443, "stopId": "15335", "dirName": "North", "dirNum": 4, "routeTag": "511"}
+      {"tag": "4322", "title": "Bathurst St At Dundas St West - Toronto Western Hospital", "lat": 43.6521799, "lng": -79.4058699, "stopId": "0126", "dirName": "North", "dirNum": 4, "routeTag": "511"}
+      {"tag": "6072", "title": "Bathurst St At Nassau St - Toronto Western Hospital", "lat": 43.65417, "lng": -79.40667, "stopId": "0177", "dirName": "North", "dirNum": 4, "routeTag": "511"}
+      {"tag": "3455", "title": "Bathurst St At College St", "lat": 43.65624, "lng": -79.40751, "stopId": "0110", "dirName": "North", "dirNum": 4, "routeTag": "511"}
+      {"tag": "8508", "title": "Bathurst St At Ulster St", "lat": 43.6597299, "lng": -79.40892, "stopId": "0212", "dirName": "North", "dirNum": 4, "routeTag": "511"}
+      {"tag": "7317", "title": "Bathurst St At Harbord St", "lat": 43.66142, "lng": -79.40962, "stopId": "0148", "dirName": "North", "dirNum": 4, "routeTag": "511"}
+      {"tag": "9659", "title": "Bathurst St At Lennox St", "lat": 43.6637299, "lng": -79.4105399, "stopId": "0167", "dirName": "North", "dirNum": 4, "routeTag": "511"}
+      {"tag": "14142_ar", "title": "Bathurst Station At Bay 6", "lat": 43.6665299, "lng": -79.41129, "stopId": null, "dirName": "North", "dirNum": 4, "routeTag": "511"}      
+    </textarea><br>
+    <button id="loadLocationsButton">Load Vehicle Locations</button>
+    <button id="clearLocationsButton">Clear Vehicle Locations</button><br>
+    <button id="loadStopsButton">Load Stops</button>
+    <button id="clearStopsButton">Clear Stops</button><br>
+    <textarea id="status" rows="2" readonly></textarea>
+  </div>
+  <div>
+    <button id="toggleRefreshButton">Stop Refreshing</button><br>
+    <button id="resetViewButton">Reset View</button>
+  </div>
+  <br>
+  <div id="map"></div>
+  <!-- prettier-ignore -->
+  <script>(g => { var h, a, k, p = "The Google Maps JavaScript API", c = "google", l = "importLibrary", q = "__ib__", m = document, b = window; b = b[c] || (b[c] = {}); var d = b.maps || (b.maps = {}), r = new Set, e = new URLSearchParams, u = () => h || (h = new Promise(async (f, n) => { await (a = m.createElement("script")); e.set("libraries", [...r] + ""); for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()), g[k]); e.set("callback", c + ".maps." + q); a.src = `https://maps.${c}apis.com/maps/api/js?` + e; d[q] = f; a.onerror = () => h = n(Error(p + " could not load.")); a.nonce = m.querySelector("script[nonce]")?.nonce || ""; m.head.append(a) })); d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)) })
+      ({ key: "AIzaSyDAULJx8yoz01IKBWUVIa2zpkikhUYg8cA", v: "beta" });</script>
+</body>
+
+</html>
