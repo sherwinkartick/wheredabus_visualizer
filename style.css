@@ -71,3 +71,7 @@ textarea {
 .attribute-value {
   color: #007bff;
 }
+
+.hidden {
+  display: none;
+}

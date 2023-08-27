@@ -4,12 +4,13 @@ const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("m
 let gmap;
 
 // The location of TTC stop
-const stop_location = { "lat": 43.64657, "lng": -79.4067199 };
-let stop_marker;
+const default_stop_location = { "lat": 43.64657, "lng": -79.4067199 };
+let current_position_marker;
+
 
 let stop_colours = []
 let direction_colours = [];
-const routes = ["7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "19", "20", "21", "22", "23", "24", "25", "26", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "96", "97", "98", "99", "100", "101", "102", "104", "105", "106", "107", "108", "109", "110", "111", "112", "113", "115", "116", "118", "119", "120", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130", "131", "132", "133", "134", "135", "160", "161", "162", "165", "167", "168", "169", "171", "176", "184", "189", "200", "201", "202", "203", "300", "301", "302", "304", "306", "307", "310", "312", "315", "320", "322", "324", "325", "329", "332", "334", "335", "336", "337", "339", "341", "343", "352", "353", "354", "363", "365", "384", "385", "395", "396", "501", "503", "504", "505", "506", "509", "510", "511", "512", "900", "902", "905", "924", "925", "927", "929", "935", "937", "939", "941", "944", "945", "952", "953", "954", "960", "968", "984", "985", "986", "989", "995", "996"]
+let routes_to_refresh = '["301", "307", "501", "511"]'
 
 const location_markers = {};
 const info_windows = {};
@@ -22,8 +23,8 @@ let isIntervalRunning = false; // Track if the interval is running
 
 async function initMap() {
     gmap = new google.maps.Map(document.getElementById("map"), {
-        center: stop_location,
-        zoom: 13,
+        center: default_stop_location,
+        zoom: 14,
         zoomControl: true,
         mapTypeControl: false,
         streetViewControl: false,
@@ -48,7 +49,7 @@ function parseLocations() {
             }
         }
     }
-    document.getElementById('status').textContent = "Location Length: " + vlss.length;
+    updateStatus("Location Length: " + vlss.length);
     return vlss;
 }
 
@@ -67,7 +68,7 @@ function parseStops() {
             }
         }
     }
-    document.getElementById('status').textContent = "Stops Length: " + stops.length;
+    updateStatus("Stops Length: " + stops.length);
     return stops;
 }
 
@@ -85,7 +86,7 @@ function getBackground(route) {
     const combinedColors = [];
 
     while (combinedColors.length < direction_colours.length) {
-        combinedColors.push(...color2, ...color4);
+        combinedColors.push(...color4, ...color2);
     }
 
     // const colours = ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a", "#ffee65", "#beb9db", "#fdcce5", "#8bd3c7", 
@@ -93,9 +94,17 @@ function getBackground(route) {
     return combinedColors[direction_colours.indexOf(route)]
 }
 
+function getStopBackground(index) {
+    const color1 = ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a", "#ffee65", "#beb9db", "#fdcce5", "#8bd3c7"];
+    const color2 = ["#e60049", "#0bb4ff", "#50e991", "#e6d800", "#9b19f5", "#ffa300", "#dc0ab4", "#b3d4ff", "#00bfa0"];
+    const combinedColors = [];
+    combinedColors.push(...color1, ...color2);
+    return combinedColors[index % combinedColors.length]
+}
+
 function updateLocations(vlss) {
     const ts = new Date();
-    document.getElementById('status').textContent = "Updating at " + ts.toLocaleString();
+    updateStatus("Updating at " + ts.toLocaleString())
 
     const items = []
     for (let vls of vlss) {
@@ -103,7 +112,7 @@ function updateLocations(vlss) {
     }
     direction_colours = [...new Set(items)]
     direction_colours.sort()
-    document.getElementById('status').textContent = 'VLS: ' + vlss.length + ' Direction colours:' + direction_colours.length;
+    updateStatus('VLS: ' + vlss.length + ' Direction colours:' + direction_colours.length)
 
     outer: for (let key in location_markers) {
         for (let vls of vlss) {
@@ -125,16 +134,20 @@ function updateLocations(vlss) {
             }
         }
         id_time[vls.id] = vls.time;
-    
         const glyphImg = document.createElement("img");
         glyphImg.src = "arrow-up.svg";
-        glyphImg.style.transform = `rotate(${vls.heading}deg)`;
+        let getHeading = gmap.getHeading();
+        if (getHeading == undefined) {
+            getHeading = 0;
+        }
+        let newHeading = vls.heading-getHeading;
+        glyphImg.style.transform = `rotate(${newHeading}deg)`;
         let background = getBackground(`${vls.routeTag} ${vls.dirName}`)
         const glyphSvgPinElement = new PinElement({
             glyph: glyphImg,
             background: background,
             borderColor: '#FFFFFF',
-            scale: 0.5
+            scale: 1.0
         });
         const currentTimeInSeconds = Math.floor(Date.now() / 1000);
         const timeDelta = currentTimeInSeconds - vls.time;
@@ -179,30 +192,24 @@ function updateLocations(vlss) {
 
 
 function loadStops(stops) {
-    const items = []
+    let i = 0;
     for (let stop of stops) {
-        items.push(`${stop.routeTag} ${stop.dirName}`)
-    }
-    stop_colours = [...new Set(items)]
-    stop_colours.sort()
-
-    for (let stop of stops) {
-        let background = getBackground(`${stop.routeTag} ${stop.dirName}`)
+        let background = getStopBackground(i)
         const pin = new PinElement({
             background: background,
-            borderColor: "#FF0F00",
-            glyphColor: "#FF0F00",
-            scale: 0.5
+            borderColor: "#FFFFFF",
+            glyphColor: "#FFFFFF",
+            scale: 0.75
         });
-        stop_marker = new AdvancedMarkerElement({
+        let stop_marker = new AdvancedMarkerElement({
             map: gmap,
             position: stop,
             content: pin.element,
-            title: `${stop.tag} - ${stop.routeTag} ${stop.dirName} - ${stop.title}`,
+            title: `${stop.tag} - ${stop.title}`,
         });
         stop_markers[stop.tag] = stop_marker;
+        i = i + 1;
     }
-
 }
 
 function clearLocations() {
@@ -229,16 +236,37 @@ function fetchData() {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(routes),
+        body: routes_to_refresh,
     })
         .then(response => response.json())
         .then(vlss => {
             updateLocations(vlss)
         })
         .catch(error => {
-            document.getElementById('status').textContent = 'Error fetching data:' + error;
+            updateStatus('Error fetching data:' + error);
             console.error('Error fetching data:', error);
             toggleRefresh()
+        });
+}
+
+
+function fetchNearestStops(coords) {
+    fetch('http://192.168.1.204:5000/stops/nearest', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(coords),
+    })
+        .then(response => response.json())
+        .then(stopsNearest => {
+            clearStops()
+            loadStops(stopsNearest)
+        })
+        .catch(error => {
+            updateStatus('Error fetching stop:' + error);
+            console.error('Error fetching stops:', error);
         });
 }
 
@@ -254,61 +282,150 @@ function updateInfoWindows() {
 
 function initControls() {
     document.getElementById('resetViewButton').addEventListener("click", () => {
-        gmap.setCenter(stop_location);
+        gmap.setHeading(0);
+        gmap.setTilt(0);
+        gmap.setCenter(default_stop_location);
     });
 
-    // document.getElementById('loadLocationsButton').addEventListener("click", () => {
-    //     let vlss = parseLocations();
-    //     updateLocations(vlss);
-    // });
+    // Add a click event listener to the button
+    document.getElementById('toggleLoadWidgets').addEventListener('click', () => {
+        // Toggle the "hidden" class on the div
+        document.getElementById('loadWidgets').classList.toggle('hidden');
 
-    // document.getElementById('clearLocationsButton').addEventListener("click", () => {
-    //     clearLocations();
-    // });
+        // Update the button text
+        if (document.getElementById('loadWidgets').classList.contains('hidden')) {
+            document.getElementById('toggleLoadWidgets').textContent = 'Show Load Widgets';
+        } else {
+            document.getElementById('toggleLoadWidgets').textContent = 'Hide Load Widgets';
+        }
+    });
 
-    // document.getElementById('loadStopsButton').addEventListener("click", () => {
-    //     let stops = parseStops();
-    //     loadStops(stops);
-    // });
+    document.getElementById('loadLocationsButton').addEventListener("click", () => {
+        let vlss = parseLocations();
+        updateLocations(vlss);
+    });
 
-    // document.getElementById('clearStopsButton').addEventListener("click", () => {
-    //     clearStops();
-    // });
-}
+    document.getElementById('clearLocationsButton').addEventListener("click", () => {
+        clearLocations();
+    });
 
-function initStops() {
+    document.getElementById('loadStopsButton').addEventListener("click", () => {
+        let stops = parseStops();
+        loadStops(stops);
+    });
+
+    document.getElementById('clearStopsButton').addEventListener("click", () => {
+        clearStops();
+    });
+
+    document.getElementById('currentLocationButton').addEventListener("click", () => {
+        getLocation();
+    });
+
+    document.getElementById('loadNearestStopsButton').addEventListener("click", () => {
+        loadNearestStops();
+    });
 }
 
 function initUpdating() {
-    fetchData();
     const toggleRefreshButton = document.getElementById('toggleRefreshButton');
     toggleRefreshButton.addEventListener('click', () => {
         toggleRefresh();
     });
-    toggleRefresh()
+    document.getElementById('routes_to_refresh').value = routes_to_refresh;
 }
 
 function toggleRefresh() {
     const toggleRefreshButton = document.getElementById('toggleRefreshButton');
     if (!isIntervalRunning) {
         // Start the interval and update button text
+        document.getElementById('toggleLoadWidgets').textContent
+        routes_to_refresh = document.getElementById('routes_to_refresh').value
+        fetchData()
         fetchDataIntervalId = setInterval(fetchData, 10000);
         updateInfoWindowsIntervalId = setInterval(updateInfoWindows, 1000)
         toggleRefreshButton.textContent = 'Stop Refreshing';
+        updateStatus("Starting refreshing");
     } else {
         clearInterval(fetchDataIntervalId);
         clearInterval(updateInfoWindowsIntervalId);
         toggleRefreshButton.textContent = 'Start Refreshing';
+        updateStatus("Stopped refreshing");
     }
 
     // Toggle the interval running state
     isIntervalRunning = !isIntervalRunning;
 }
 
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+        updateStatus("Geolocation is not working in this browser.");
+    }
+}
+
+function showPosition(position) {
+    
+    if (current_position_marker != undefined) {
+        current_position_marker.setMap(null);
+    } 
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    updateStatus("Latitude: " + latitude + " Longitude: " + longitude);
+    document.getElementById('nearestStopPosition').value = latitude + "," + longitude;
+    let coords = {lat:latitude, lng:longitude};
+
+    current_position_marker = new google.maps.Marker({
+        position: coords,
+        map: gmap,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 10,
+          fillOpacity: 1,
+          strokeWeight: 2,
+          fillColor: '#5384ED',
+          strokeColor: '#ffffff',
+        },
+      });
+  }
+
+  function loadNearestStops() {
+    const parts =  document.getElementById('nearestStopPosition').value.split(',');
+    const latitude = parts[0];
+    const longitude = parts[1];
+    const js_coord =     {
+        "coords": {
+            "latitude": Number(latitude) ,
+            "longitude": Number(longitude) 
+        }
+    };
+    showPosition(js_coord);
+    gmap.setCenter(current_position_marker.position)
+    clearStops();
+    fetchNearestStops({ "lat": latitude, "lng": longitude });
+    
+  }
+
+function updateStatus(status) {
+    const statusElement = document.getElementById("status");
+    const currentStatus = statusElement.textContent;
+    const now = new Date();
+    const formattedDate = now.toLocaleString();
+    const newStatusEntry = `[${formattedDate}] ${status}`;
+    const lines = currentStatus.split('\n');
+    lines.unshift(newStatusEntry);
+    if (lines.length > 5) {
+        lines.length = 5;
+    }
+    const newStatus = lines.join('\n');
+    statusElement.textContent = newStatus;
+}
+
 
 initMap();
 initControls();
-initStops();
 initUpdating();
+
 
 
