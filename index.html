@@ -16,20 +16,27 @@
     <button id="loadLocationsButton">Load Vehicle Locations</button>
     <button id="clearLocationsButton">Clear Vehicle Locations</button><br>
     <button id="loadStopsButton">Load Stops</button>
-    <button id="clearStopsButton">Clear Stops</button>
+    <button id="clearStopsButton">Clear Stops</button><br>
+    <button id="loadPointsButton">Load Points</button>
+    <button id="clearPointsButton">Clear Points</button>
   </div>
   <div>
     <span style="margin: 10px;">Status:</span><br>
     <textarea id="status" rows="5" readonly></textarea><br>
-    <span style="margin: 10px;">Route to Refresh:</span><br>
     <div style="display: flex; align-items: center;">
-
+      <span style="margin: 10px;">Routes to Refresh:</span>
       <textarea id="routes_to_refresh" rows="1" style="width: 50%;"></textarea>
-      <button id="toggleRefreshButton">Start Refreshing</button>
+      <button id="toggleRoutesRefreshButton">Start Refreshing</button>
     </div>
     <button id="currentLocationButton">Get Current Location</button>
     <span style="margin: 10px;">Position: <input type="text" id="nearestStopPosition" value="43.64763175446401, -79.40623827336564"></span>
     <button id="loadNearestStopsButton">Get Nearest Stops</button><br>
+    <div style="display: flex; align-items: center;">
+      <span style="margin: 10px;">Route-Direction: <input type="text" id="route_direction_to_refresh" size="50" value='{"route_tag": "501","direction_tag": "501_0_501Bbus"}'></span>
+      <button id="toggleRouteDirectionRefreshButton">Start Refreshing</button>
+    </div>
+    <span style="margin: 10px;">Route-Direction: <input type="text" id="routeDirectionStops" size="50" value='{"route_tag": "501","direction_tag": "501_0_501Bbus"}'></span><button id="loadRouteDirectionStopsButton">Get Route Direction Stops</button><br>
+    <span style="margin: 10px;">Route-Direction: <input type="text" id="routeDirectionPath" size="50" value='{"route_tag": "501","direction_tag": "501_0_501Bbus"}'></span><button id="loadRouteDirectionPathButton">Get Route Direction Path</button><br><br>
     <button id="resetViewButton">Reset View</button>
   </div>
   <div id="map"></div>
