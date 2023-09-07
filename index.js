@@ -1,5 +1,5 @@
-const { Map } = await google.maps.importLibrary("maps");
-const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
+const { GMap } = await google.maps.importLibrary("maps");
+const { AdvancedMarkerElement, PinElement, Marker } = await google.maps.importLibrary("marker");
 
 let gmap;
 
@@ -8,14 +8,16 @@ const default_stop_location = { "lat": 43.64657, "lng": -79.4067199 };
 let current_position_marker;
 
 
-let stop_colours = []
+let stop_colours = [];
 let direction_colours = [];
-let routes_to_refresh = '["301", "307", "501", "511"]'
+let routes_to_refresh = '["301", "307", "501", "511"]';
+let route_direction_to_refresh = '{"route_tag": "501","direction_tag": "501_0_501Bbus"}';
 
 const location_markers = {};
 const info_windows = {};
 const stop_markers = {};
 const id_time = {};
+const direction_paths = [];
 
 let fetchDataIntervalId;
 let updateInfoWindowsIntervalId;
@@ -71,6 +73,49 @@ function parseStops() {
     updateStatus("Stops Length: " + stops.length);
     return stops;
 }
+
+function parseStops2() {
+    const json_ta = document.getElementById('json_ta').value;
+    const lines = json_ta.trim().split('\n');
+    const stops = [];
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line !== '') {
+            try {
+                let parser = new DOMParser();
+                let xmlDoc = parser.parseFromString(line,"text/xml");
+                let lat = parseFloat(xmlDoc.getElementsByTagName("point")[0].getAttribute("lat"));
+                let lng = parseFloat(xmlDoc.getElementsByTagName("point")[0].getAttribute("lon"));
+                stops.push({lat:lat, lng:lng});
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+            }
+        }
+    }
+    updateStatus("Stops Length: " + stops.length);
+    return stops;
+}
+
+function parsePoints() {
+    const json_ta = document.getElementById('json_ta').value;
+    const lines = json_ta.trim().split('\n');
+    const points = [];
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line !== '') {
+            try {
+                let point = JSON.parse(line);
+                points.push(point);
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+            }
+        }
+    }
+    updateStatus("Points Length: " + points.length);
+    return points;
+}
+
+
 
 function isInfoWindowOpen(infoWindow) {
     let map = infoWindow.map;
@@ -192,25 +237,96 @@ function updateLocations(vlss) {
 
 
 function loadStops(stops) {
-    let i = 0;
+    const directionFamilyIndexMap = new Map();
     for (let stop of stops) {
-        let background = getStopBackground(i)
+        if (!directionFamilyIndexMap.has(stop.direction_group)) {
+            directionFamilyIndexMap.set(stop.direction_group, directionFamilyIndexMap.size);
+        }
+        // console.log(stop.direction_group + " " + directionFamilyIndexMap.get(stop.direction_group))
+        const background_index = directionFamilyIndexMap.get(stop.direction_group)
+        let background = getStopBackground(background_index)
         const pin = new PinElement({
             background: background,
             borderColor: "#FFFFFF",
             glyphColor: "#FFFFFF",
-            scale: 0.75
+            scale: 0.6
         });
         let stop_marker = new AdvancedMarkerElement({
             map: gmap,
             position: stop,
             content: pin.element,
             title: `${stop.tag} - ${stop.title}`,
+            zIndex: Marker.MAX_ZINDEX
         });
         stop_markers[stop.tag] = stop_marker;
-        i = i + 1;
+    }
+    const bounds = new google.maps.LatLngBounds();
+    for (const key in stop_markers) {
+        const stop_marker = stop_markers[key];
+        bounds.extend(stop_marker.position)
+    }
+    gmap.fitBounds(bounds);
+}
+
+
+function loadStops2(stops) {
+    let i = 0;
+    for (let stop of stops) {
+        const pin = new PinElement({
+            background: getStopBackground(i),
+            borderColor: "#FFFFFF",
+            glyphColor: "#FFFFFF",
+            scale: 0.6
+        });
+        console.log(stop)
+        let stop_marker = new AdvancedMarkerElement({
+            map: gmap,
+            position: stop,
+            content: pin.element,
+        });
+        stop_markers[i] = stop_marker;
+        i++;
+    }
+    const bounds = new google.maps.LatLngBounds();
+    for (const key in stop_markers) {
+        const stop_marker = stop_markers[key];
+        bounds.extend(stop_marker.position)
+    }
+    gmap.fitBounds(bounds);
+
+}
+
+function loadPoints(points) {
+
+    const paths = new Map();
+
+    for (let point of points) {
+        const index = point.index;
+        // console.log("Point: " + point.index + " " + index);
+        if (!paths.has(index)) {
+            paths.set(index, []);
+        }
+        paths.get(index).push(point);
+    }
+
+    let i = 0;
+    // console.log("Paths: " + paths.size);
+    for (let path of paths.values()){
+        // console.log("Path:" + i);
+        const colour =  getStopBackground(i);
+        let direction_path = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: colour,
+            strokeOpacity: 1.0,
+            strokeWeight: 2,
+        });
+        direction_path.setMap(gmap);
+        direction_paths.push(direction_path);
+        i = i+1;
     }
 }
+
 
 function clearLocations() {
     for (const key in location_markers) {
@@ -226,6 +342,12 @@ function clearStops() {
         const stop_marker = stop_markers[key];
         stop_marker.position = null;
         delete stop_markers[key];
+    }
+}
+
+function clearPoints() {
+    for (let path of direction_paths) {
+        path.setMap(null);
     }
 }
 
@@ -249,6 +371,25 @@ function fetchData() {
         });
 }
 
+function fetchRouteDirectionData() {
+    fetch('http://192.168.1.204:5000/route/direction/locations', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: route_direction_to_refresh,
+    })
+        .then(response => response.json())
+        .then(vlss => {
+            updateLocations(vlss)
+        })
+        .catch(error => {
+            updateStatus('Error fetching data:' + error);
+            console.error('Error fetching data:', error);
+            toggleRefresh()
+        });
+}
 
 function fetchNearestStops(coords) {
     fetch('http://192.168.1.204:5000/stops/nearest', {
@@ -262,11 +403,55 @@ function fetchNearestStops(coords) {
         .then(response => response.json())
         .then(stopsNearest => {
             clearStops()
+            // console.log(stopsNearest)
             loadStops(stopsNearest)
         })
         .catch(error => {
             updateStatus('Error fetching stop:' + error);
             console.error('Error fetching stops:', error);
+        });
+}
+
+
+function fetchRouteDirectionStops(routeDirection) {
+    fetch('http://192.168.1.204:5000/route/direction/stops', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(routeDirection),
+    })
+        .then(response => response.json())
+        .then(stopsRouteDirection => {
+            clearStops()
+            // console.log(stopsRouteDirection)
+            loadStops(stopsRouteDirection)
+        })
+        .catch(error => {
+            updateStatus('Error fetching direction stop:' + error);
+            console.error('Error fetching direction stops:', error);
+        });
+}
+
+
+function fetchRouteDirectionPath(routeDirection) {
+    fetch('http://192.168.1.204:5000/route/direction/path', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(routeDirection),
+    })
+        .then(response => response.json())
+        .then(pathRouteDirection => {
+            // console.log(pathRouteDirection)
+            loadPoints(pathRouteDirection)
+        })
+        .catch(error => {
+            updateStatus('Error fetching path:' + error);
+            console.error('Error fetching path:', error);
         });
 }
 
@@ -318,6 +503,15 @@ function initControls() {
         clearStops();
     });
 
+    document.getElementById('loadPointsButton').addEventListener("click", () => {
+        let points = parsePoints();
+        loadPoints(points);
+    });
+
+    document.getElementById('clearPointsButton').addEventListener("click", () => {
+        clearPoints();
+    });
+
     document.getElementById('currentLocationButton').addEventListener("click", () => {
         getLocation();
     });
@@ -325,31 +519,64 @@ function initControls() {
     document.getElementById('loadNearestStopsButton').addEventListener("click", () => {
         loadNearestStops();
     });
+
+    document.getElementById('loadRouteDirectionStopsButton').addEventListener("click", () => {
+        loadRouteDirectionStops();
+    });
+
+    document.getElementById('loadRouteDirectionPathButton').addEventListener("click", () => {
+        loadRouteDirectionPath();
+    });
 }
 
 function initUpdating() {
-    const toggleRefreshButton = document.getElementById('toggleRefreshButton');
-    toggleRefreshButton.addEventListener('click', () => {
-        toggleRefresh();
+    const toggleRoutesRefreshButton = document.getElementById('toggleRoutesRefreshButton');
+    toggleRoutesRefreshButton.addEventListener('click', () => {
+        toggleRoutesRefresh();
     });
+    const toggleRouteDirectionRefreshButton = document.getElementById('toggleRouteDirectionRefreshButton');
+    toggleRouteDirectionRefreshButton.addEventListener('click', () => {
+        toggleRouteDirectionRefresh();
+    }); 
     document.getElementById('routes_to_refresh').value = routes_to_refresh;
+    document.getElementById('route_direction_to_refresh').value = route_direction_to_refresh;
 }
 
-function toggleRefresh() {
-    const toggleRefreshButton = document.getElementById('toggleRefreshButton');
+function toggleRoutesRefresh() {
+    const toggleRoutesRefreshButton = document.getElementById('toggleRoutesRefreshButton');
     if (!isIntervalRunning) {
         // Start the interval and update button text
-        document.getElementById('toggleLoadWidgets').textContent
         routes_to_refresh = document.getElementById('routes_to_refresh').value
         fetchData()
         fetchDataIntervalId = setInterval(fetchData, 10000);
         updateInfoWindowsIntervalId = setInterval(updateInfoWindows, 1000)
-        toggleRefreshButton.textContent = 'Stop Refreshing';
+        toggleRoutesRefreshButton.textContent = 'Stop Refreshing';
         updateStatus("Starting refreshing");
     } else {
         clearInterval(fetchDataIntervalId);
         clearInterval(updateInfoWindowsIntervalId);
-        toggleRefreshButton.textContent = 'Start Refreshing';
+        toggleRoutesRefreshButton.textContent = 'Start Refreshing';
+        updateStatus("Stopped refreshing");
+    }
+
+    // Toggle the interval running state
+    isIntervalRunning = !isIntervalRunning;
+}
+
+function toggleRouteDirectionRefresh() {
+    const toggleRouteDirectionRefreshButton = document.getElementById('toggleRouteDirectionRefreshButton');
+    if (!isIntervalRunning) {
+        // Start the interval and update button text
+        route_direction_to_refresh = document.getElementById('route_direction_to_refresh').value
+        fetchRouteDirectionData()
+        fetchDataIntervalId = setInterval(fetchRouteDirectionData, 10000);
+        updateInfoWindowsIntervalId = setInterval(updateInfoWindows, 1000)
+        toggleRouteDirectionRefreshButton.textContent = 'Stop Refreshing';
+        updateStatus("Starting refreshing");
+    } else {
+        clearInterval(fetchDataIntervalId);
+        clearInterval(updateInfoWindowsIntervalId);
+        toggleRouteDirectionRefreshButton.textContent = 'Start Refreshing';
         updateStatus("Stopped refreshing");
     }
 
@@ -405,6 +632,20 @@ function showPosition(position) {
     clearStops();
     fetchNearestStops({ "lat": latitude, "lng": longitude });
     
+  }
+
+  function loadRouteDirectionStops() {
+    const routeDirection =  JSON.parse(document.getElementById('routeDirectionStops').value);
+    clearStops();
+    // console.log(routeDirection)
+    fetchRouteDirectionStops(routeDirection);
+  }
+
+  function loadRouteDirectionPath() {
+    const routeDirection =  JSON.parse(document.getElementById('routeDirectionPath').value);
+    clearPoints()
+    // console.log(routeDirection)
+    fetchRouteDirectionPath(routeDirection);
   }
 
 function updateStatus(status) {
