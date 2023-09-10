@@ -19,6 +19,9 @@ const stop_markers = {};
 const id_time = {};
 const direction_paths = [];
 
+const stopData = new Map();
+const singleStopInfoWindow = new google.maps.InfoWindow();
+
 let fetchDataIntervalId;
 let updateInfoWindowsIntervalId;
 let isIntervalRunning = false; // Track if the interval is running
@@ -247,27 +250,51 @@ function loadStops(stops) {
         let background = getStopBackground(background_index)
         const pin = new PinElement({
             background: background,
-            borderColor: "#FFFFFF",
-            glyphColor: "#FFFFFF",
+            borderColor: "#000000",
+            glyph: "",
             scale: 0.6
         });
         let stop_marker = new AdvancedMarkerElement({
             map: gmap,
             position: stop,
             content: pin.element,
-            title: `${stop.tag} - ${stop.title}`,
             zIndex: Marker.MAX_ZINDEX
         });
         stop_markers[stop.tag] = stop_marker;
+
+        const contentString = `
+        <div>
+            <div><span class="attribute-label">Stop Tag:</span> <span class="attribute-value">${stop.tag}</span></div>
+        </div>`;
+        stop_marker.addEventListener("gmp-click", () => {
+            openStopInfoWindow(stop_marker, contentString);
+        });
+        stopData.set(stop.tag, stop);
     }
     const bounds = new google.maps.LatLngBounds();
     for (const key in stop_markers) {
         const stop_marker = stop_markers[key];
-        bounds.extend(stop_marker.position)
+        bounds.extend(stop_marker.position);
     }
     gmap.fitBounds(bounds);
 }
 
+function openStopInfoWindow(stop_marker, contentString) {
+    singleStopInfoWindow.setContent(contentString);
+    singleStopInfoWindow.open({
+        anchor: stop_marker,
+        gmap,
+    });
+    //get tag for stop_marker
+    const tag = Object.keys(stop_markers).find(key => stop_markers[key] === stop_marker);
+    console.log("Tag: " + tag);
+    for (const key in stop_markers) {
+        const stop_marker = stop_markers[key];
+        if (tag != key) {
+            stop_marker.position = null;
+        }
+    }
+}
 
 function loadStops2(stops) {
     let i = 0;
