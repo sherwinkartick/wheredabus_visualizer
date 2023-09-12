@@ -75,3 +75,24 @@ textarea {
 .hidden {
   display: none;
 }
+
+.table {
+  display: table;
+  border-collapse: collapse;
+  width: 50%;
+  margin: 2px;
+}
+
+.row {
+  display: table-row;
+}
+
+.cell {
+  display: table-cell;
+  /* border: 1px solid black; */
+  padding: 2px;
+  text-align: center;
+}
+
+
+

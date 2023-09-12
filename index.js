@@ -7,7 +7,6 @@ let gmap;
 const default_stop_location = { "lat": 43.64657, "lng": -79.4067199 };
 let current_position_marker;
 
-
 let stop_colours = [];
 let direction_colours = [];
 let routes_to_refresh = '["301", "307", "501", "511"]';
@@ -20,7 +19,12 @@ const id_time = {};
 const direction_paths = [];
 
 const stopData = new Map();
+
 const singleStopInfoWindow = new google.maps.InfoWindow();
+google.maps.event.addListener(singleStopInfoWindow,'closeclick',function(){
+    closeStopInfoWindow();
+});
+let singleStopSelectedTag = null;
 
 let fetchDataIntervalId;
 let updateInfoWindowsIntervalId;
@@ -242,11 +246,12 @@ function updateLocations(vlss) {
 function loadStops(stops) {
     const directionFamilyIndexMap = new Map();
     for (let stop of stops) {
-        if (!directionFamilyIndexMap.has(stop.direction_group)) {
-            directionFamilyIndexMap.set(stop.direction_group, directionFamilyIndexMap.size);
+        const key = getDirectionKey(stop);
+        if (!directionFamilyIndexMap.has(key)) {
+            directionFamilyIndexMap.set(key, directionFamilyIndexMap.size);
         }
-        // console.log(stop.direction_group + " " + directionFamilyIndexMap.get(stop.direction_group))
-        const background_index = directionFamilyIndexMap.get(stop.direction_group)
+        // console.log(key + " " + directionFamilyIndexMap.get(key))
+        const background_index = directionFamilyIndexMap.get(key)
         let background = getStopBackground(background_index)
         const pin = new PinElement({
             background: background,
@@ -262,13 +267,16 @@ function loadStops(stops) {
         });
         stop_markers[stop.tag] = stop_marker;
 
-        const contentString = `
-        <div>
-            <div><span class="attribute-label">Stop Tag:</span> <span class="attribute-value">${stop.tag}</span></div>
-        </div>`;
+        let contentString = '<div class="table">';
+        for (let route_direction of stop.route_directions) {
+            contentString += `<div class="row"><div class="cell">${route_direction.route_tag}</div><div class="cell"><button id="infowindow_stop_${route_direction.direction_tag}">${route_direction.direction_tag}</button></div></div>`;
+        }
+        contentString += '</div>';
+        // console.log(contentString)
         stop_marker.addEventListener("gmp-click", () => {
-            openStopInfoWindow(stop_marker, contentString);
+            openStopInfoWindow(stop_marker, contentString, stop.route_directions);
         });
+        stop.background_index = background_index;
         stopData.set(stop.tag, stop);
     }
     const bounds = new google.maps.LatLngBounds();
@@ -279,20 +287,74 @@ function loadStops(stops) {
     gmap.fitBounds(bounds);
 }
 
-function openStopInfoWindow(stop_marker, contentString) {
+function getDirectionKey(stop) {
+    const directionTags = stop.route_directions.map(direction => direction.direction_tag);
+    directionTags.sort();
+    const key = directionTags.join(',');
+    return key;
+}
+
+function openStopInfoWindow(stop_marker, contentString, route_directions) {
+    singleStopSelectedTag = Object.keys(stop_markers).find(key => stop_markers[key] === stop_marker);
+    const selectedStopObj = stopData.get(singleStopSelectedTag);
     singleStopInfoWindow.setContent(contentString);
+    google.maps.event.addListenerOnce(singleStopInfoWindow, 'domready', function () {
+        for (let route_direction of route_directions) {
+            const id = `infowindow_stop_${route_direction.direction_tag}`;
+            const dir_button = document.getElementById(id);
+            dir_button.addEventListener('click', () => {
+                fetchRouteDirectionPath(route_direction);
+            });
+        }
+    });
     singleStopInfoWindow.open({
         anchor: stop_marker,
         gmap,
     });
-    //get tag for stop_marker
-    const tag = Object.keys(stop_markers).find(key => stop_markers[key] === stop_marker);
-    console.log("Tag: " + tag);
+
+    const pin = new PinElement({
+        background: getStopBackground(selectedStopObj.background_index),
+        borderColor: "#000000",
+        glyph: "",
+        scale: 1.0
+    });
+    stop_marker.content = pin.element;
+    const selectedStopDirections = selectedStopObj.route_directions.map(direction => direction.direction_tag);
+    for (const key in stop_markers) {
+        if (key == singleStopSelectedTag) continue;
+        const loopStop = stopData.get(key)
+        const loopStopDirections = loopStop.route_directions.map(direction => direction.direction_tag);
+        const commonDirectionTags = selectedStopDirections.filter(tag => loopStopDirections.includes(tag));
+        if (commonDirectionTags.length == 0) {
+            const stop_marker = stop_markers[key];
+            stop_marker.position = null;
+        } else {
+            const newpin = new PinElement({
+                background: getStopBackground(loopStop.background_index),
+                borderColor: "#000000",
+                glyph: "",
+                scale: 0.6
+            });
+            const newstop_marker = stop_markers[key];
+            newstop_marker.content = newpin.element;
+        }
+    }
+}
+
+function closeStopInfoWindow() {
+    // console.log("closing infowindow");
+    singleStopSelectedTag = null;
     for (const key in stop_markers) {
         const stop_marker = stop_markers[key];
-        if (tag != key) {
-            stop_marker.position = null;
-        }
+        const loopStop = stopData.get(key)
+        const newpin = new PinElement({
+            background: getStopBackground(loopStop.background_index),
+            borderColor: "#000000",
+            glyph: "",
+            scale: 0.6
+        });
+        stop_marker.content = newpin.element;
+        stop_marker.position = loopStop;
     }
 }
 
@@ -340,7 +402,8 @@ function loadPoints(points) {
     // console.log("Paths: " + paths.size);
     for (let path of paths.values()){
         // console.log("Path:" + i);
-        const colour =  getStopBackground(i);
+
+        const colour =  getStopBackground(stopData.get(singleStopSelectedTag).background_index);
         let direction_path = new google.maps.Polyline({
             path: path,
             geodesic: true,
@@ -462,7 +525,8 @@ function fetchRouteDirectionStops(routeDirection) {
 }
 
 
-function fetchRouteDirectionPath(routeDirection) {
+export function fetchRouteDirectionPath(routeDirection) {
+    console.log("fetch fired: " + routeDirection.direction_tag);
     fetch('http://192.168.1.204:5000/route/direction/path', {
         method: 'POST',
         headers: {
