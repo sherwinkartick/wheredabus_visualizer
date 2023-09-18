@@ -164,6 +164,7 @@ function updateLocations(vlss) {
     }
     direction_colours = [...new Set(items)]
     direction_colours.sort()
+
     updateStatus('VLS: ' + vlss.length + ' Direction colours:' + direction_colours.length)
 
     outer: for (let key in location_markers) {
@@ -195,6 +196,9 @@ function updateLocations(vlss) {
         let newHeading = vls.heading-getHeading;
         glyphImg.style.transform = `rotate(${newHeading}deg)`;
         let background = getBackground(`${vls.routeTag} ${vls.dirName}`)
+        if (singleStopSelectedTag != null) {
+            background =  getStopBackground(stopData.get(singleStopSelectedTag).background_index);
+        }
         const glyphSvgPinElement = new PinElement({
             glyph: glyphImg,
             background: background,
@@ -267,18 +271,27 @@ function loadStops(stops) {
         });
         stop_markers[stop.tag] = stop_marker;
 
-        let contentString = '<div class="table">';
+        let contentString = `<div><span class="attribute-label">Stop tag:</span> <span class="attribute-value">${stop.tag}</span></div><div class="table">`;
         for (let route_direction of stop.route_directions) {
             contentString += `<div class="row"><div class="cell">${route_direction.route_tag}</div><div class="cell"><button id="infowindow_stop_${route_direction.direction_tag}">${route_direction.direction_tag}</button></div></div>`;
         }
         contentString += '</div>';
         // console.log(contentString)
         stop_marker.addEventListener("gmp-click", () => {
-            openStopInfoWindow(stop_marker, contentString, stop.route_directions);
+            selectStop(stop_marker, contentString, stop);
         });
         stop.background_index = background_index;
         stopData.set(stop.tag, stop);
     }
+    updateStopFitBounds();
+}
+
+function selectStop(stop_marker, contentString, stop) {
+    clearPoints();
+    openStopInfoWindow(stop_marker, contentString, stop.route_directions);
+}
+
+function updateStopFitBounds() {
     const bounds = new google.maps.LatLngBounds();
     for (const key in stop_markers) {
         const stop_marker = stop_markers[key];
@@ -298,12 +311,13 @@ function openStopInfoWindow(stop_marker, contentString, route_directions) {
     singleStopSelectedTag = Object.keys(stop_markers).find(key => stop_markers[key] === stop_marker);
     const selectedStopObj = stopData.get(singleStopSelectedTag);
     singleStopInfoWindow.setContent(contentString);
+    singleStopInfoWindow.setZindex = 0;
     google.maps.event.addListenerOnce(singleStopInfoWindow, 'domready', function () {
         for (let route_direction of route_directions) {
             const id = `infowindow_stop_${route_direction.direction_tag}`;
             const dir_button = document.getElementById(id);
             dir_button.addEventListener('click', () => {
-                fetchRouteDirectionPath(route_direction);
+                selectRouteDirection(route_direction);
             });
         }
     });
@@ -341,9 +355,21 @@ function openStopInfoWindow(stop_marker, contentString, route_directions) {
     }
 }
 
+function selectRouteDirection(route_direction) {
+    stopUpdating();
+    fetchRouteDirectionPath(route_direction);
+    route_direction_to_refresh = JSON.stringify(route_direction);
+    fetchRouteDirectionData();
+    fetchDataIntervalId = setInterval(fetchRouteDirectionData, 10000);
+    updateInfoWindowsIntervalId = setInterval(updateInfoWindows, 1000);
+}
+
 function closeStopInfoWindow() {
     // console.log("closing infowindow");
+    stopUpdating();
+    clearLocations();
     singleStopSelectedTag = null;
+    clearPoints();
     for (const key in stop_markers) {
         const stop_marker = stop_markers[key];
         const loopStop = stopData.get(key)
@@ -358,37 +384,12 @@ function closeStopInfoWindow() {
     }
 }
 
-function loadStops2(stops) {
-    let i = 0;
-    for (let stop of stops) {
-        const pin = new PinElement({
-            background: getStopBackground(i),
-            borderColor: "#FFFFFF",
-            glyphColor: "#FFFFFF",
-            scale: 0.6
-        });
-        console.log(stop)
-        let stop_marker = new AdvancedMarkerElement({
-            map: gmap,
-            position: stop,
-            content: pin.element,
-        });
-        stop_markers[i] = stop_marker;
-        i++;
-    }
-    const bounds = new google.maps.LatLngBounds();
-    for (const key in stop_markers) {
-        const stop_marker = stop_markers[key];
-        bounds.extend(stop_marker.position)
-    }
-    gmap.fitBounds(bounds);
-
-}
 
 function loadPoints(points) {
 
     const paths = new Map();
 
+    /* this data structure is weired to accommodate the visualizer. A list of points, vs a tree */
     for (let point of points) {
         const index = point.index;
         // console.log("Point: " + point.index + " " + index);
@@ -400,21 +401,25 @@ function loadPoints(points) {
 
     let i = 0;
     // console.log("Paths: " + paths.size);
+    let colour =  getStopBackground(Math.floor(Math.random() * 9));
     for (let path of paths.values()){
         // console.log("Path:" + i);
-
-        const colour =  getStopBackground(stopData.get(singleStopSelectedTag).background_index);
+        if (singleStopSelectedTag != null) {
+            colour =  getStopBackground(stopData.get(singleStopSelectedTag).background_index);
+        }
         let direction_path = new google.maps.Polyline({
             path: path,
             geodesic: true,
             strokeColor: colour,
             strokeOpacity: 1.0,
-            strokeWeight: 2,
+            strokeWeight: 4,
         });
         direction_path.setMap(gmap);
         direction_paths.push(direction_path);
         i = i+1;
     }
+
+
 }
 
 
@@ -462,6 +467,7 @@ function fetchData() {
 }
 
 function fetchRouteDirectionData() {
+    console.log("Fetching " + route_direction_to_refresh);
     fetch('http://192.168.1.204:5000/route/direction/locations', {
         method: 'POST',
         headers: {
@@ -477,7 +483,8 @@ function fetchRouteDirectionData() {
         .catch(error => {
             updateStatus('Error fetching data:' + error);
             console.error('Error fetching data:', error);
-            toggleRefresh()
+            stopUpdating();
+            // toggleRefresh();
         });
 }
 
@@ -526,7 +533,7 @@ function fetchRouteDirectionStops(routeDirection) {
 
 
 export function fetchRouteDirectionPath(routeDirection) {
-    console.log("fetch fired: " + routeDirection.direction_tag);
+    // console.log("fetch fired: " + routeDirection.direction_tag);
     fetch('http://192.168.1.204:5000/route/direction/path', {
         method: 'POST',
         headers: {
@@ -538,7 +545,8 @@ export function fetchRouteDirectionPath(routeDirection) {
         .then(response => response.json())
         .then(pathRouteDirection => {
             // console.log(pathRouteDirection)
-            loadPoints(pathRouteDirection)
+            clearPoints();
+            loadPoints(pathRouteDirection);
         })
         .catch(error => {
             updateStatus('Error fetching path:' + error);
@@ -644,14 +652,18 @@ function toggleRoutesRefresh() {
         toggleRoutesRefreshButton.textContent = 'Stop Refreshing';
         updateStatus("Starting refreshing");
     } else {
-        clearInterval(fetchDataIntervalId);
-        clearInterval(updateInfoWindowsIntervalId);
+        stopUpdating();
         toggleRoutesRefreshButton.textContent = 'Start Refreshing';
         updateStatus("Stopped refreshing");
     }
 
     // Toggle the interval running state
     isIntervalRunning = !isIntervalRunning;
+}
+
+function stopUpdating() {
+    clearInterval(fetchDataIntervalId);
+    clearInterval(updateInfoWindowsIntervalId);
 }
 
 function toggleRouteDirectionRefresh() {
