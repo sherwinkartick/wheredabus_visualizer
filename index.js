@@ -21,6 +21,7 @@ const direction_paths = [];
 const stopData = new Map();
 
 const singleStopInfoWindow = new google.maps.InfoWindow();
+singleStopInfoWindow.setOptions({disableAutoPan : true});
 google.maps.event.addListener(singleStopInfoWindow,'closeclick',function(){
     closeStopInfoWindow();
 });
@@ -41,6 +42,13 @@ async function initMap() {
         rotateControl: true,
         mapId: "cf811fefe256b068"
     });
+    google.maps.event.addListener(gmap, 'idle', function() {
+        handleIdle();
+    });
+}
+
+function handleIdle() {
+    positionSingleStopInfoWindow();
 }
 
 function parseLocations() {
@@ -271,11 +279,12 @@ function loadStops(stops) {
         });
         stop_markers[stop.tag] = stop_marker;
 
-        let contentString = `<div><span class="attribute-label">Stop tag:</span> <span class="attribute-value">${stop.tag}</span></div><div class="table">`;
+        let contentString = `<div><div><span class="attribute-label">Stop tag:</span> <span class="attribute-value">${stop.tag}</span></div><div class="table">`;
+        // let contentString = `<div><div><span class="attribute-label">Stop tag:</span> <span class="attribute-value">${stop.tag}</span></div>`;
         for (let route_direction of stop.route_directions) {
             contentString += `<div class="row"><div class="cell">${route_direction.route_tag}</div><div class="cell"><button id="infowindow_stop_${route_direction.direction_tag}">${route_direction.direction_tag}</button></div></div>`;
         }
-        contentString += '</div>';
+        contentString += '</div></div>';
         // console.log(contentString)
         stop_marker.addEventListener("gmp-click", () => {
             selectStop(stop_marker, contentString, stop);
@@ -312,18 +321,24 @@ function openStopInfoWindow(stop_marker, contentString, route_directions) {
     const selectedStopObj = stopData.get(singleStopSelectedTag);
     singleStopInfoWindow.setContent(contentString);
     singleStopInfoWindow.setZindex = 0;
-    google.maps.event.addListenerOnce(singleStopInfoWindow, 'domready', function () {
+    google.maps.event.clearListeners(singleStopInfoWindow, 'domready');
+    google.maps.event.addListener(singleStopInfoWindow, 'domready', function () {
         for (let route_direction of route_directions) {
             const id = `infowindow_stop_${route_direction.direction_tag}`;
             const dir_button = document.getElementById(id);
-            dir_button.addEventListener('click', () => {
-                selectRouteDirection(route_direction);
-            });
+            if (dir_button == null) {
+                console.log("dir_button is null: " + id);
+            } else {
+                dir_button.addEventListener('click', () => {
+                    selectRouteDirection(route_direction);
+                });
+            }
         }
     });
+    positionSingleStopInfoWindow();
     singleStopInfoWindow.open({
-        anchor: stop_marker,
-        gmap,
+        // anchor: stop_marker,
+        map: gmap,
     });
 
     const pin = new PinElement({
@@ -353,6 +368,13 @@ function openStopInfoWindow(stop_marker, contentString, route_directions) {
             newstop_marker.content = newpin.element;
         }
     }
+}
+
+function positionSingleStopInfoWindow() {
+    const center = JSON.parse(JSON.stringify(gmap.getCenter()));
+    const boundaries = JSON.parse(JSON.stringify(gmap.getBounds()));
+    const newPosition = { lat: center.lat + Math.abs(boundaries.north - center.lat) * 0, lng: center.lng - Math.abs(boundaries.west - center.lng) * 0.75 };
+    singleStopInfoWindow.setPosition(newPosition);
 }
 
 function selectRouteDirection(route_direction) {
