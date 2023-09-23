@@ -31,6 +31,8 @@ let fetchDataIntervalId;
 let updateInfoWindowsIntervalId;
 let isIntervalRunning = false; // Track if the interval is running
 
+let click_timeout = null;
+
 async function initMap() {
     gmap = new google.maps.Map(document.getElementById("map"), {
         center: default_stop_location,
@@ -40,10 +42,28 @@ async function initMap() {
         streetViewControl: false,
         fullscreenControl: true,
         rotateControl: true,
-        mapId: "cf811fefe256b068"
+        mapId: "cf811fefe256b068",
+        clickableIcons: false
     });
     google.maps.event.addListener(gmap, 'idle', function() {
         handleIdle();
+    });
+    google.maps.event.addListener(gmap, 'click', (mapsMouseEvent) => {
+        click_timeout = setTimeout(function(){
+            const latitude = mapsMouseEvent.latLng.lat();
+            const longitude = mapsMouseEvent.latLng.lng();
+            const coords =  {
+                lat: latitude,
+                lng: longitude 
+            };
+            clearStops();
+            showPosition(coords);
+            // gmap.setCenter(current_position_marker.position)
+            fetchNearestStops({ "lat": latitude, "lng": longitude });
+        }, 400);   
+    });
+    google.maps.event.addListener(gmap, 'dblclick', function(event) {       
+        clearTimeout(click_timeout);
     });
 }
 
@@ -711,25 +731,30 @@ function toggleRouteDirectionRefresh() {
 
 function getLocation() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
+        navigator.geolocation.getCurrentPosition(getCurrentPositionHandler);
     } else {
         updateStatus("Geolocation is not working in this browser.");
     }
 }
 
-function showPosition(position) {
-    
+function getCurrentPositionHandler(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    const coords = {"lat":latitude, "lng":longitude};
+    console.log("Latitude: " + coords.lat + " Longitude: " + coords.lng);
+    showPosition(coords);
+}
+
+function showPosition(bob) {
     if (current_position_marker != undefined) {
         current_position_marker.setMap(null);
     } 
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
-    updateStatus("Latitude: " + latitude + " Longitude: " + longitude);
-    document.getElementById('nearestStopPosition').value = latitude + "," + longitude;
-    let coords = {lat:latitude, lng:longitude};
+
+    updateStatus("Latitude: " + bob.lat + " Longitude: " + bob.lng);
+    document.getElementById('nearestStopPosition').value = bob.lat + "," + bob.lng;
 
     current_position_marker = new google.maps.Marker({
-        position: coords,
+        position: bob,
         map: gmap,
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
@@ -746,17 +771,16 @@ function showPosition(position) {
     const parts =  document.getElementById('nearestStopPosition').value.split(',');
     const latitude = parts[0];
     const longitude = parts[1];
-    const js_coord =     {
-        "coords": {
-            "latitude": Number(latitude) ,
-            "longitude": Number(longitude) 
-        }
+    console.log("Latitude: " + latitude);
+    console.log("Longitude: " + longitude);
+    const js_coord =  {
+            "lat": Number(latitude),
+            "lng": Number(longitude) 
     };
     showPosition(js_coord);
     gmap.setCenter(current_position_marker.position)
     clearStops();
     fetchNearestStops({ "lat": latitude, "lng": longitude });
-    
   }
 
   function loadRouteDirectionStops() {
@@ -792,6 +816,3 @@ function updateStatus(status) {
 initMap();
 initControls();
 initUpdating();
-
-
-
