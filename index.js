@@ -33,6 +33,8 @@ let isIntervalRunning = false; // Track if the interval is running
 
 let click_timeout = null;
 
+const host = location.hostname;
+
 async function initMap() {
     gmap = new google.maps.Map(document.getElementById("map"), {
         center: default_stop_location,
@@ -489,7 +491,8 @@ function clearPoints() {
 }
 
 function fetchData() {
-    fetch('http://192.168.1.204:5000/routes/locations', {
+    const url = `http://${host}:5000/routes/locations`
+    fetch(url, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -510,7 +513,8 @@ function fetchData() {
 
 function fetchRouteDirectionData() {
     console.log("Fetching " + route_direction_to_refresh);
-    fetch('http://192.168.1.204:5000/route/direction/locations', {
+    const url = `http://${host}:5000/route/direction/locations`;
+    fetch(url, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -531,7 +535,8 @@ function fetchRouteDirectionData() {
 }
 
 function fetchNearestStops(coords) {
-    fetch('http://192.168.1.204:5000/stops/nearest', {
+    const url = `http://${host}:5000/stops/nearest`;
+    fetch(url, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -553,7 +558,8 @@ function fetchNearestStops(coords) {
 
 
 function fetchRouteDirectionStops(routeDirection) {
-    fetch('http://192.168.1.204:5000/route/direction/stops', {
+    const url = `http://${host}:5000/route/direction/stops`;
+    fetch(url, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -576,7 +582,8 @@ function fetchRouteDirectionStops(routeDirection) {
 
 export function fetchRouteDirectionPath(routeDirection) {
     // console.log("fetch fired: " + routeDirection.direction_tag);
-    fetch('http://192.168.1.204:5000/route/direction/path', {
+    const url = `http://${host}:5000/route/direction/path`;
+    fetch(url, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
