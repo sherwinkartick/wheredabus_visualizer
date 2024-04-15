@@ -33,7 +33,9 @@ let isIntervalRunning = false; // Track if the interval is running
 
 let click_timeout = null;
 
-const host = location.hostname;
+const protocol = location.protocol;
+const host = location.hostname + ":5000";
+const base_url = protocol + '//' + host
 
 async function initMap() {
     gmap = new google.maps.Map(document.getElementById("map"), {
@@ -64,9 +66,9 @@ async function initMap() {
             fetchNearestStops({ "lat": latitude, "lng": longitude });
         }, 400);   
     });
-    google.maps.event.addListener(gmap, 'dblclick', function(event) {       
-        clearTimeout(click_timeout);
-    });
+    // google.maps.event.addListener(gmap, 'dblclick', function(event) {       
+    //     clearTimeout(click_timeout);
+    // });
 }
 
 function handleIdle() {
@@ -297,7 +299,8 @@ function loadStops(stops) {
             map: gmap,
             position: stop,
             content: pin.element,
-            zIndex: Marker.MAX_ZINDEX
+            zIndex: Marker.MAX_ZINDEX,
+            gmpClickable: true
         });
         stop_markers[stop.tag] = stop_marker;
 
@@ -491,7 +494,8 @@ function clearPoints() {
 }
 
 function fetchData() {
-    const url = `http://${host}:5000/routes/locations`
+
+    const url = `${base_url}/routes/locations`
     fetch(url, {
         method: 'POST',
         headers: {
@@ -513,7 +517,7 @@ function fetchData() {
 
 function fetchRouteDirectionData() {
     console.log("Fetching " + route_direction_to_refresh);
-    const url = `http://${host}:5000/route/direction/locations`;
+    const url = `${base_url}/route/direction/locations`;
     fetch(url, {
         method: 'POST',
         headers: {
@@ -535,7 +539,7 @@ function fetchRouteDirectionData() {
 }
 
 function fetchNearestStops(coords) {
-    const url = `http://${host}:5000/stops/nearest`;
+    const url = `${base_url}/stops/nearest`;
     fetch(url, {
         method: 'POST',
         headers: {
@@ -558,7 +562,7 @@ function fetchNearestStops(coords) {
 
 
 function fetchRouteDirectionStops(routeDirection) {
-    const url = `http://${host}:5000/route/direction/stops`;
+    const url = `${base_url}/route/direction/stops`;
     fetch(url, {
         method: 'POST',
         headers: {
@@ -582,7 +586,7 @@ function fetchRouteDirectionStops(routeDirection) {
 
 export function fetchRouteDirectionPath(routeDirection) {
     // console.log("fetch fired: " + routeDirection.direction_tag);
-    const url = `http://${host}:5000/route/direction/path`;
+    const url = `${base_url}/route/direction/path`;
     fetch(url, {
         method: 'POST',
         headers: {
