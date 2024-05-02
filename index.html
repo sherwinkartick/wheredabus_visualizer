@@ -1,50 +1,25 @@
 <html>
 
 <head>
-  <title>Wheredabus Inc</title>
-  <link rel="icon" type="image/x-icon" href="./favicon.ico">
-  <link rel="stylesheet" type="text/css" href="./style.css" />
-  <script type="module" src="./index.js"></script>
-  <meta name="viewport" content="width=device-width"> 
+    <title>Wheredabus Inc</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <script type="module" src="./index.js"></script>
 </head>
 
 <body>
-  <h1>Wheredabus Debugging Tool</h1>
-  <button id="toggleLoadWidgets">Show Load Widgets</button>
-  <div id="loadWidgets" class="hidden">
-    <textarea id="json_ta" rows="5">
-    </textarea><br>
-    <button id="loadLocationsButton">Load Vehicle Locations</button>
-    <button id="clearLocationsButton">Clear Vehicle Locations</button><br>
-    <button id="loadStopsButton">Load Stops</button>
-    <button id="clearStopsButton">Clear Stops</button><br>
-    <button id="loadPointsButton">Load Points</button>
-    <button id="clearPointsButton">Clear Points</button>
-  </div>
-  <div>
-    <span style="margin: 10px;">Status:</span><br>
-    <textarea id="status" rows="5" readonly></textarea><br>
-    <div style="display: flex; align-items: center;">
-      <span style="margin: 10px;">Routes to Refresh:</span>
-      <textarea id="routes_to_refresh" rows="1" style="width: 50%;"></textarea>
-      <button id="toggleRoutesRefreshButton">Start Refreshing</button>
+    <!-- this html results in horizontal scroll bars -->
+    <h1 style="text-align: center;">Wheredabus Debugging Tool</h1>
+    <div id="actionButtons">
+        <button id="resetViewButton">Reset View</button>
+        <button id="currentLocationButton">Use Current Location</button>
     </div>
-    <button id="currentLocationButton">Get Current Location</button>
-    <span style="margin: 10px;">Position: <input type="text" id="nearestStopPosition" value="43.64763175446401, -79.40623827336564"></span>
-    <button id="loadNearestStopsButton">Get Nearest Stops</button><br>
-    <div style="display: flex; align-items: center;">
-      <span style="margin: 10px;">Route-Direction: <input type="text" id="route_direction_to_refresh" size="50" value='{"route_tag": "501","direction_tag": "501_0_501Bbus"}'></span>
-      <button id="toggleRouteDirectionRefreshButton">Start Refreshing</button>
-    </div>
-    <span style="margin: 10px;">Route-Direction: <input type="text" id="routeDirectionStops" size="50" value='{"route_tag": "501","direction_tag": "501_0_501Bbus"}'></span><button id="loadRouteDirectionStopsButton">Get Route Direction Stops</button><br>
-    <span style="margin: 10px;">Route-Direction: <input type="text" id="routeDirectionPath" size="50" value='{"route_tag": "501","direction_tag": "501_0_501Bbus"}'></span><button id="loadRouteDirectionPathButton">Get Route Direction Path</button><br><br>
-    <button id="resetViewButton">Reset View</button>
-  </div>
-  <div id="map"></div>
-  <br>
-  <!-- prettier-ignore -->
-  <script>(g => { var h, a, k, p = "The Google Maps JavaScript API", c = "google", l = "importLibrary", q = "__ib__", m = document, b = window; b = b[c] || (b[c] = {}); var d = b.maps || (b.maps = {}), r = new Set, e = new URLSearchParams, u = () => h || (h = new Promise(async (f, n) => { await (a = m.createElement("script")); e.set("libraries", [...r] + ""); for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()), g[k]); e.set("callback", c + ".maps." + q); a.src = `https://maps.${c}apis.com/maps/api/js?` + e; d[q] = f; a.onerror = () => h = n(Error(p + " could not load.")); a.nonce = m.querySelector("script[nonce]")?.nonce || ""; m.head.append(a) })); d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)) })
-      ({ key: "AIzaSyDAULJx8yoz01IKBWUVIa2zpkikhUYg8cA", v: "beta" });</script>
+    <div id="map"></div>
+    <textarea id="status" rows="auto"></textarea>
+</body>
+
+<script>(g => { var h, a, k, p = "The Google Maps JavaScript API", c = "google", l = "importLibrary", q = "__ib__", m = document, b = window; b = b[c] || (b[c] = {}); var d = b.maps || (b.maps = {}), r = new Set, e = new URLSearchParams, u = () => h || (h = new Promise(async (f, n) => { await (a = m.createElement("script")); e.set("libraries", [...r] + ""); for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()), g[k]); e.set("callback", c + ".maps." + q); a.src = `https://maps.${c}apis.com/maps/api/js?` + e; d[q] = f; a.onerror = () => h = n(Error(p + " could not load.")); a.nonce = m.querySelector("script[nonce]")?.nonce || ""; m.head.append(a) })); d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)) })
+        ({ key: "AIzaSyDAULJx8yoz01IKBWUVIa2zpkikhUYg8cA", v: "beta" });</script>
 </body>
 
 </html>

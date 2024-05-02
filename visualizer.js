@@ -3,8 +3,8 @@ const { AdvancedMarkerElement, PinElement, Marker } = await google.maps.importLi
 
 let gmap;
 
-const default_stop_location = { "lat": 43.647191, "lng": -79.403999 }; // Queen and Bathurst
-let current_coords;
+// The location of TTC stop
+const default_stop_location = { "lat": 43.64657, "lng": -79.4067199 };
 let current_position_marker;
 
 let stop_colours = [];
@@ -34,10 +34,7 @@ let isIntervalRunning = false; // Track if the interval is running
 let click_timeout = null;
 
 const protocol = location.protocol;
-let host = location.hostname;
-if (location.hostname != "queenwest.webhop.me") {
-    host = location.hostname + ":5000";
-} 
+const host = location.hostname + ":5000";
 const base_url = protocol + '//' + host
 
 async function initMap() {
@@ -65,7 +62,7 @@ async function initMap() {
             };
             clearStops();
             showPosition(coords);
-            //gmap.setCenter(current_position_marker.position)
+            // gmap.setCenter(current_position_marker.position)
             fetchNearestStops({ "lat": latitude, "lng": longitude });
         }, 400);   
     });
@@ -77,6 +74,87 @@ async function initMap() {
 function handleIdle() {
     positionSingleStopInfoWindow();
 }
+
+function parseLocations() {
+    const json_ta = document.getElementById('json_ta').value;
+    const lines = json_ta.trim().split('\n');
+    const vlss = [];
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line !== '') {
+            try {
+                const vls = JSON.parse(line);
+                vlss.push(vls);
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+            }
+        }
+    }
+    updateStatus("Location Length: " + vlss.length);
+    return vlss;
+}
+
+function parseStops() {
+    const json_ta = document.getElementById('json_ta').value;
+    const lines = json_ta.trim().split('\n');
+    const stops = [];
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line !== '') {
+            try {
+                let stop = JSON.parse(line);
+                stops.push(stop);
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+            }
+        }
+    }
+    updateStatus("Stops Length: " + stops.length);
+    return stops;
+}
+
+function parseStops2() {
+    const json_ta = document.getElementById('json_ta').value;
+    const lines = json_ta.trim().split('\n');
+    const stops = [];
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line !== '') {
+            try {
+                let parser = new DOMParser();
+                let xmlDoc = parser.parseFromString(line,"text/xml");
+                let lat = parseFloat(xmlDoc.getElementsByTagName("point")[0].getAttribute("lat"));
+                let lng = parseFloat(xmlDoc.getElementsByTagName("point")[0].getAttribute("lon"));
+                stops.push({lat:lat, lng:lng});
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+            }
+        }
+    }
+    updateStatus("Stops Length: " + stops.length);
+    return stops;
+}
+
+function parsePoints() {
+    const json_ta = document.getElementById('json_ta').value;
+    const lines = json_ta.trim().split('\n');
+    const points = [];
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line !== '') {
+            try {
+                let point = JSON.parse(line);
+                points.push(point);
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+            }
+        }
+    }
+    updateStatus("Points Length: " + points.length);
+    return points;
+}
+
+
 
 function isInfoWindowOpen(infoWindow) {
     let map = infoWindow.map;
@@ -541,25 +619,126 @@ function updateInfoWindows() {
 }
 
 function initControls() {
-    let position = default_stop_location
     document.getElementById('resetViewButton').addEventListener("click", () => {
-        console.log("Current coords: " + current_coords);
-        if (current_coords != undefined) {
-            position = current_coords;
-        }
         gmap.setHeading(0);
         gmap.setTilt(0);
-        gmap.setCenter(position);
-        gmap.setZoom(16);
+        gmap.setCenter(default_stop_location);
     });
+
+    // Add a click event listener to the button
+    document.getElementById('toggleLoadWidgets').addEventListener('click', () => {
+        // Toggle the "hidden" class on the div
+        document.getElementById('loadWidgets').classList.toggle('hidden');
+
+        // Update the button text
+        if (document.getElementById('loadWidgets').classList.contains('hidden')) {
+            document.getElementById('toggleLoadWidgets').textContent = 'Show Load Widgets';
+        } else {
+            document.getElementById('toggleLoadWidgets').textContent = 'Hide Load Widgets';
+        }
+    });
+
+    document.getElementById('loadLocationsButton').addEventListener("click", () => {
+        let vlss = parseLocations();
+        updateLocations(vlss);
+    });
+
+    document.getElementById('clearLocationsButton').addEventListener("click", () => {
+        clearLocations();
+    });
+
+    document.getElementById('loadStopsButton').addEventListener("click", () => {
+        let stops = parseStops();
+        loadStops(stops);
+    });
+
+    document.getElementById('clearStopsButton').addEventListener("click", () => {
+        clearStops();
+    });
+
+    document.getElementById('loadPointsButton').addEventListener("click", () => {
+        let points = parsePoints();
+        loadPoints(points);
+    });
+
+    document.getElementById('clearPointsButton').addEventListener("click", () => {
+        clearPoints();
+    });
+
     document.getElementById('currentLocationButton').addEventListener("click", () => {
         getLocation();
     });
+
+    document.getElementById('loadNearestStopsButton').addEventListener("click", () => {
+        loadNearestStops();
+    });
+
+    document.getElementById('loadRouteDirectionStopsButton').addEventListener("click", () => {
+        loadRouteDirectionStops();
+    });
+
+    document.getElementById('loadRouteDirectionPathButton').addEventListener("click", () => {
+        loadRouteDirectionPath();
+    });
+}
+
+function initUpdating() {
+    const toggleRoutesRefreshButton = document.getElementById('toggleRoutesRefreshButton');
+    toggleRoutesRefreshButton.addEventListener('click', () => {
+        toggleRoutesRefresh();
+    });
+    const toggleRouteDirectionRefreshButton = document.getElementById('toggleRouteDirectionRefreshButton');
+    toggleRouteDirectionRefreshButton.addEventListener('click', () => {
+        toggleRouteDirectionRefresh();
+    }); 
+    document.getElementById('routes_to_refresh').value = routes_to_refresh;
+    document.getElementById('route_direction_to_refresh').value = route_direction_to_refresh;
+}
+
+function toggleRoutesRefresh() {
+    const toggleRoutesRefreshButton = document.getElementById('toggleRoutesRefreshButton');
+    if (!isIntervalRunning) {
+        // Start the interval and update button text
+        routes_to_refresh = document.getElementById('routes_to_refresh').value
+        fetchData()
+        fetchDataIntervalId = setInterval(fetchData, 10000);
+        updateInfoWindowsIntervalId = setInterval(updateInfoWindows, 1000)
+        toggleRoutesRefreshButton.textContent = 'Stop Refreshing';
+        updateStatus("Starting refreshing");
+    } else {
+        stopUpdating();
+        toggleRoutesRefreshButton.textContent = 'Start Refreshing';
+        updateStatus("Stopped refreshing");
+    }
+
+    // Toggle the interval running state
+    isIntervalRunning = !isIntervalRunning;
 }
 
 function stopUpdating() {
     clearInterval(fetchDataIntervalId);
     clearInterval(updateInfoWindowsIntervalId);
+}
+
+function toggleRouteDirectionRefresh() {
+    const toggleRouteDirectionRefreshButton = document.getElementById('toggleRouteDirectionRefreshButton');
+    if (!isIntervalRunning) {
+        // Start the interval and update button text
+        route_direction_to_refresh = document.getElementById('route_direction_to_refresh').value
+        fetchRouteDirectionData()
+        fetchDataIntervalId = setInterval(fetchRouteDirectionData, 10000);
+        updateInfoWindowsIntervalId = setInterval(updateInfoWindows, 1000)
+        toggleRouteDirectionRefreshButton.textContent = 'Stop Refreshing';
+        updateStatus("Starting refreshing");
+    } else {
+        clearInterval(fetchDataIntervalId);
+        clearInterval(updateInfoWindowsIntervalId);
+        toggleRouteDirectionRefreshButton.textContent = 'Start Refreshing';
+        updateStatus("Stopped refreshing");
+    }
+
+    // Toggle the interval running state
+    isIntervalRunning = !isIntervalRunning;
 }
 
 function getLocation() {
@@ -575,43 +754,60 @@ function getCurrentPositionHandler(position) {
     const longitude = position.coords.longitude;
     const coords = {"lat":latitude, "lng":longitude};
     console.log("Latitude: " + coords.lat + " Longitude: " + coords.lng);
-    showPositionAndStops(coords);
-}
-
-function showPositionAndStops(coords) {
     showPosition(coords);
-    //gmap.setCenter(current_position_marker.position);
-    fetchNearestStops(coords);
 }
 
-function showPosition(coords) {
+function showPosition(bob) {
     if (current_position_marker != undefined) {
         current_position_marker.setMap(null);
-    }
-    current_coords = coords; 
-    updateStatus("Latitude: " + coords.lat + " Longitude: " + coords.lng);
+    } 
 
-    // current_position_marker = new google.maps.Marker({
-    //     position: coords,
-    //     map: gmap,
-    //     icon: {
-    //       path: google.maps.SymbolPath.CIRCLE,
-    //       scale: 10,
-    //       fillOpacity: 1,
-    //       strokeWeight: 2,
-    //       fillColor: '#5384ED',
-    //       strokeColor: '#ffffff',
-    //     }
-    //   });
+    updateStatus("Latitude: " + bob.lat + " Longitude: " + bob.lng);
+    document.getElementById('nearestStopPosition').value = bob.lat + "," + bob.lng;
 
-    const glyphImg = document.createElement("img");
-    glyphImg.src = "bluedot.svg";
-    current_position_marker = new AdvancedMarkerElement({
-        position: coords,
+    current_position_marker = new google.maps.Marker({
+        position: bob,
         map: gmap,
-        content: glyphImg
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 10,
+          fillOpacity: 1,
+          strokeWeight: 2,
+          fillColor: '#5384ED',
+          strokeColor: '#ffffff',
+        },
       });
-}
+  }
+
+  function loadNearestStops() {
+    const parts =  document.getElementById('nearestStopPosition').value.split(',');
+    const latitude = parts[0];
+    const longitude = parts[1];
+    console.log("Latitude: " + latitude);
+    console.log("Longitude: " + longitude);
+    const js_coord =  {
+            "lat": Number(latitude),
+            "lng": Number(longitude) 
+    };
+    showPosition(js_coord);
+    gmap.setCenter(current_position_marker.position)
+    clearStops();
+    fetchNearestStops({ "lat": latitude, "lng": longitude });
+  }
+
+  function loadRouteDirectionStops() {
+    const routeDirection =  JSON.parse(document.getElementById('routeDirectionStops').value);
+    clearStops();
+    // console.log(routeDirection)
+    fetchRouteDirectionStops(routeDirection);
+  }
+
+  function loadRouteDirectionPath() {
+    const routeDirection =  JSON.parse(document.getElementById('routeDirectionPath').value);
+    clearPoints()
+    // console.log(routeDirection)
+    fetchRouteDirectionPath(routeDirection);
+  }
 
 function updateStatus(status) {
     const statusElement = document.getElementById("status");
@@ -628,5 +824,7 @@ function updateStatus(status) {
     statusElement.textContent = newStatus;
 }
 
+
 initMap();
 initControls();
+initUpdating();

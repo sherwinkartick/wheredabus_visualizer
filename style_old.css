@@ -1,0 +1,64 @@
+html {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100%;
+  margin: 0;
+  padding: 1% 1% 0;
+  font-family: "Roboto", "sans-serif";
+  overflow: hidden;
+}
+
+.center-text {
+  text-align: center;
+}
+
+#map {
+  height: 80%;
+  width: 90%;
+  margin-bottom: 1%; /* Decrease margin to reduce whitespace */
+}
+
+textarea {
+  resize: none;
+  width: 90%;
+  margin-bottom: 1%;
+}
+
+.attribute-label {
+  font-weight: bold;
+  color: #555;
+}
+
+.attribute-value {
+  color: #007bff;
+}
+
+.hidden {
+  display: none;
+}
+
+.table {
+  display: table;
+  border-collapse: collapse;
+  width: 50%;
+  margin: 2px;
+}
+
+.row {
+  display: table-row;
+}
+
+.cell {
+  display: table-cell;
+  /* border: 1px solid black; */
+  padding: 2px;
+  text-align: center;
+}
+
+
