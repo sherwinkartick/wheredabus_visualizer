@@ -20,11 +20,15 @@ const direction_paths = [];
 
 const stopData = new Map();
 
-const singleStopInfoWindow = new google.maps.InfoWindow();
-singleStopInfoWindow.setOptions({disableAutoPan : true});
-google.maps.event.addListener(singleStopInfoWindow,'closeclick',function(){
-    closeStopInfoWindow();
-});
+// const singleStopInfoWindow = new google.maps.InfoWindow();
+// singleStopInfoWindow.setOptions({disableAutoPan : true});
+
+// a div with an x button that calls closeStopInfoWindow
+const singleStopDivTemplate = document.createElement('div');
+singleStopDivTemplate.setAttribute('id', 'singleStopDiv');
+singleStopDivTemplate.classList.add('singleStopDiv');
+singleStopDivTemplate.innerHTML = '<div class="close-button-div"><button id="closeSingleStopDivButton" class="close-button">&#x2716;</button></div>';
+
 let singleStopSelectedTag = null;
 
 let fetchDataIntervalId;
@@ -43,7 +47,7 @@ const base_url = protocol + '//' + host
 async function initMap() {
     gmap = new google.maps.Map(document.getElementById("map"), {
         center: default_stop_location,
-        zoom: 14,
+        zoom: 16,
         zoomControl: true,
         mapTypeControl: false,
         streetViewControl: false,
@@ -52,9 +56,7 @@ async function initMap() {
         mapId: "cf811fefe256b068",
         clickableIcons: false
     });
-    google.maps.event.addListener(gmap, 'idle', function() {
-        handleIdle();
-    });
+
     google.maps.event.addListener(gmap, 'click', (mapsMouseEvent) => {
         click_timeout = setTimeout(function(){
             const latitude = mapsMouseEvent.latLng.lat();
@@ -74,9 +76,9 @@ async function initMap() {
     // });
 }
 
-function handleIdle() {
-    positionSingleStopInfoWindow();
-}
+// function handleIdle() {
+//     positionSingleStopInfoWindow();
+// }
 
 function isInfoWindowOpen(infoWindow) {
     let map = infoWindow.map;
@@ -227,10 +229,10 @@ function loadStops(stops) {
         });
         stop_markers[stop.tag] = stop_marker;
 
-        let contentString = `<div><div><span class="attribute-label">Stop tag:</span> <span class="attribute-value">${stop.tag}</span></div><div class="table">`;
+        let contentString = `<div><div class="title-row"><span class="attribute-label">Stop tag:</span> <span class="attribute-value">${stop.tag}</span></div><div class="table">`;
         // let contentString = `<div><div><span class="attribute-label">Stop tag:</span> <span class="attribute-value">${stop.tag}</span></div>`;
         for (let route_direction of stop.route_directions) {
-            contentString += `<div class="row"><div class="cell">${route_direction.route_tag}</div><div class="cell"><button id="infowindow_stop_${route_direction.direction_tag}">${route_direction.direction_tag}</button></div></div>`;
+            contentString += `<div class="row"><div class="cell">${route_direction.route_tag}</div><div class="cell"><button id="infowindow_stop_${route_direction.direction_tag}" class="route-button">${route_direction.direction_tag}</button></div></div>`;
         }
         contentString += '</div></div>';
         // console.log(contentString)
@@ -267,27 +269,59 @@ function getDirectionKey(stop) {
 function openStopInfoWindow(stop_marker, contentString, route_directions) {
     singleStopSelectedTag = Object.keys(stop_markers).find(key => stop_markers[key] === stop_marker);
     const selectedStopObj = stopData.get(singleStopSelectedTag);
-    singleStopInfoWindow.setContent(contentString);
-    singleStopInfoWindow.setZindex = 0;
-    google.maps.event.clearListeners(singleStopInfoWindow, 'domready');
-    google.maps.event.addListener(singleStopInfoWindow, 'domready', function () {
-        for (let route_direction of route_directions) {
-            const id = `infowindow_stop_${route_direction.direction_tag}`;
-            const dir_button = document.getElementById(id);
-            if (dir_button == null) {
-                console.log("dir_button is null: " + id);
-            } else {
-                dir_button.addEventListener('click', () => {
-                    selectRouteDirection(route_direction);
-                });
-            }
+
+    const contentDiv = document.createElement('div');
+    contentDiv.setAttribute('id', 'content-string');
+    contentDiv.innerHTML = contentString;
+    const singleStopDiv = singleStopDivTemplate.cloneNode(true);
+    singleStopDiv.appendChild(contentDiv);
+
+
+    // singleStopInfoWindow.setContent(contentString);
+    // singleStopInfoWindow.setZindex = 0;
+    // google.maps.event.clearListeners(singleStopInfoWindow, 'domready');
+    // google.maps.event.addListener(singleStopInfoWindow, 'domready', function () {
+    // for (let route_direction of route_directions) {
+    //     const id = `infowindow_stop_${route_direction.direction_tag}`;
+    //     const dir_button = document.getElementById(id);
+    //     if (dir_button == null) {
+    //         console.log("dir_button is null: " + id);
+    //     } else {
+    //         dir_button.addEventListener('click', () => {
+    //             selectRouteDirection(route_direction);
+    //         });
+    //     }
+    // }
+    // });
+    // positionSingleStopInfoWindow();
+    // singleStopInfoWindow.open({
+    //     // anchor: stop_marker,
+    //     map: gmap,
+    // });
+
+    const controls_array = gmap.controls[google.maps.ControlPosition.TOP_LEFT]
+    if (controls_array.getLength() > 0) {
+        document.getElementById('closeSingleStopDivButton').removeEventListener("click", () => {
+            closeSingleStopDiv();
+        });
+        controls_array.clear();
+    }
+    gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(singleStopDiv);
+    document.getElementById('closeSingleStopDivButton').addEventListener("click", () => {
+        closeSingleStopDiv();
+    });
+
+    for (let route_direction of route_directions) {
+        const id = `infowindow_stop_${route_direction.direction_tag}`;
+        const dir_button = document.getElementById(id);
+        if (dir_button == null) {
+            console.log("dir_button is null: " + id);
+        } else {
+            dir_button.addEventListener('click', () => {
+                selectRouteDirection(route_direction);
+            });
         }
-    });
-    positionSingleStopInfoWindow();
-    singleStopInfoWindow.open({
-        // anchor: stop_marker,
-        map: gmap,
-    });
+    }
 
     const pin = new PinElement({
         background: getStopBackground(selectedStopObj.background_index),
@@ -318,12 +352,6 @@ function openStopInfoWindow(stop_marker, contentString, route_directions) {
     }
 }
 
-function positionSingleStopInfoWindow() {
-    const center = JSON.parse(JSON.stringify(gmap.getCenter()));
-    const boundaries = JSON.parse(JSON.stringify(gmap.getBounds()));
-    const newPosition = { lat: center.lat + Math.abs(boundaries.north - center.lat) * 0, lng: center.lng - Math.abs(boundaries.west - center.lng) * 0.75 };
-    singleStopInfoWindow.setPosition(newPosition);
-}
 
 function selectRouteDirection(route_direction) {
     stopUpdating();
@@ -334,8 +362,11 @@ function selectRouteDirection(route_direction) {
     updateInfoWindowsIntervalId = setInterval(updateInfoWindows, 1000);
 }
 
-function closeStopInfoWindow() {
-    // console.log("closing infowindow");
+function closeSingleStopDiv() {
+    console.log("closing single stop div");
+    const controls_array = gmap.controls[google.maps.ControlPosition.TOP_LEFT]
+    controls_array.clear();
+
     stopUpdating();
     clearLocations();
     singleStopSelectedTag = null;
@@ -359,7 +390,7 @@ function loadPoints(points) {
 
     const paths = new Map();
 
-    /* this data structure is weired to accommodate the visualizer. A list of points, vs a tree */
+    /* this data structure is weird to accommodate the visualizer. A list of points, vs a tree */
     for (let point of points) {
         const index = point.index;
         // console.log("Point: " + point.index + " " + index);
@@ -591,26 +622,13 @@ function showPosition(coords) {
     current_coords = coords; 
     updateStatus("Latitude: " + coords.lat + " Longitude: " + coords.lng);
 
-    // current_position_marker = new google.maps.Marker({
-    //     position: coords,
-    //     map: gmap,
-    //     icon: {
-    //       path: google.maps.SymbolPath.CIRCLE,
-    //       scale: 10,
-    //       fillOpacity: 1,
-    //       strokeWeight: 2,
-    //       fillColor: '#5384ED',
-    //       strokeColor: '#ffffff',
-    //     }
-    //   });
-
     const glyphImg = document.createElement("img");
     glyphImg.src = "bluedot.svg";
     current_position_marker = new AdvancedMarkerElement({
         position: coords,
         map: gmap,
         content: glyphImg
-      });
+    });
 }
 
 function updateStatus(status) {

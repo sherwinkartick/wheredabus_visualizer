@@ -30,12 +30,6 @@ h1 {
     color: #333;
 }
 
-/* When the viewport is 600px or less, decrease the font size */
-@media screen and (max-width: 600px) {
-    h1 {
-        font-size: 0.75em;
-    }
-}
 
 button {
   background-color: #4CAF50;
@@ -53,3 +47,89 @@ button {
 #action_buttons {
   margin-bottom: 20px;
 }
+
+#singleStopDiv {
+  background-color: red;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  max-width: 300px;
+}
+
+.close-button {
+  background-color: #f44336; /* Red */
+  color: white;
+  border: none;
+  border-radius: 50%; /* Rounded shape */
+  padding: 5px; /* Adjust as needed */
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px; /* Adjust as needed */
+  margin: 2px;
+  cursor: pointer;
+  transition-duration: 0.4s;
+}
+
+.close-button:hover {
+  background-color: white; 
+  color: #f44336; /* Red */
+}
+
+.close-button-div {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.table {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+.row {
+  display: table-row;
+}
+
+.cell {
+  display: table-cell;
+  border: 1px solid #ddd;
+  padding: 3px;
+  text-align: left;
+  font-size: 150%;
+}
+
+.attribute-label {
+  font-weight: bold;
+  font-size: 150%;
+}
+
+.attribute-value {
+  color: #333;
+  font-size: 150%;
+}
+
+.title-row {
+  margin-bottom: 10px; /* Adjust as needed */
+}
+
+.route-button {
+  background-color: #f44336; /* Red */
+  color: white;
+  border: none;
+  border-radius: 12px; /* Rounded corners */
+  padding: 10px 20px; /* Adjust as needed */
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition-duration: 0.4s;
+}
+
+.route-button:hover {
+  background-color: white; 
+  color: black;
+}
+
