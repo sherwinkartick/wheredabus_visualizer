@@ -9,6 +9,9 @@ This repository contains the Web UI for Wheredabus Visualizer, a debugging tool 
 - currently only stops along streetcar routes are shown due to rate-limiting by NextBus
 - select a stop, select a route the stop services, see vehicles on route, select a vehicle
 
+## Video
+
+https://github.com/sherwinkartick/wheredabus_visualizer/assets/1162671/a8cc6b34-396a-45da-a2e8-814de8718653
 
 ## Future Improvements
 
