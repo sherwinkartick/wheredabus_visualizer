@@ -23,10 +23,10 @@ https://github.com/sherwinkartick/wheredabus_visualizer/assets/1162671/a8cc6b34-
 
 ## Notes
 - The server is not running most of the time, so you have to reach out to me to ensure it's up.
--- See [here](https://github.com/sherwinkartick/didimissdabus) for python server.
--- It runs on my home desktop, and uses Caddy to expose an https endpoint to the static files and python backend
--- It's look terrible on a phone, you've been warned
--- Yes, I could have run it on a cloud, but I'm cheap and home desktop is free since I keep it on all the time. (Hmm, that seems contradictory, oh well)
+- - See [here](https://github.com/sherwinkartick/didimissdabus) for python server.
+- - It runs on my home desktop, and uses Caddy to expose an https endpoint to the static files and python backend
+- - It's look terrible on a phone, you've been warned
+- - Yes, I could have run it on a cloud, but I'm cheap and home desktop is free since I keep it on all the time. (Hmm, that seems contradictory, oh well)
 - Google Maps API costs money, so I'll never make it public, plus this is a debugging tool
 
 ## License
