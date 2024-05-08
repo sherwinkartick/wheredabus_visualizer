@@ -9,8 +9,8 @@ let current_position_marker;
 
 let stop_colours = [];
 let direction_colours = [];
-let routes_to_refresh = '["301", "307", "501", "511"]';
-let route_direction_to_refresh = '{"route_tag": "501","direction_tag": "501_0_501Bbus"}';
+// let routes_to_refresh = '["301", "307", "501", "511"]';
+let route_direction_to_refresh = '';
 
 const location_markers = {};
 const info_windows = {};
@@ -19,15 +19,6 @@ const id_time = {};
 const direction_paths = [];
 
 const stopData = new Map();
-
-// const singleStopInfoWindow = new google.maps.InfoWindow();
-// singleStopInfoWindow.setOptions({disableAutoPan : true});
-
-// a div with an x button that calls closeStopInfoWindow
-const singleStopDivTemplate = document.createElement('div');
-singleStopDivTemplate.setAttribute('id', 'singleStopDiv');
-singleStopDivTemplate.classList.add('singleStopDiv');
-singleStopDivTemplate.innerHTML = '<div class="close-button-div"><button id="closeSingleStopDivButton" class="close-button">&#x2716;</button></div>';
 
 let singleStopSelectedTag = null;
 
@@ -229,10 +220,9 @@ function loadStops(stops) {
         });
         stop_markers[stop.tag] = stop_marker;
 
-        let contentString = `<div><div class="title-row"><span class="attribute-label">Stop tag:</span> <span class="attribute-value">${stop.tag}</span></div><div class="table">`;
-        // let contentString = `<div><div><span class="attribute-label">Stop tag:</span> <span class="attribute-value">${stop.tag}</span></div>`;
+        let contentString = `<div><div class="route-title-row"><span class="route-attribute-label">Stop tag:</span> <span class="route-attribute-value">${stop.tag}</span></div><div class="route-table">`;
         for (let route_direction of stop.route_directions) {
-            contentString += `<div class="row"><div class="cell">${route_direction.route_tag}</div><div class="cell"><button id="infowindow_stop_${route_direction.direction_tag}" class="route-button">${route_direction.direction_tag}</button></div></div>`;
+            contentString += `<div class="route-row"><div class="route-cell">${route_direction.route_tag}</div><div class="route-cell"><button id="infowindow_stop_${route_direction.direction_tag}" class="route-button">${route_direction.direction_tag}</button></div></div>`;
         }
         contentString += '</div></div>';
         // console.log(contentString)
@@ -271,11 +261,12 @@ function openStopInfoWindow(stop_marker, contentString, route_directions) {
     const selectedStopObj = stopData.get(singleStopSelectedTag);
 
     const contentDiv = document.createElement('div');
-    contentDiv.setAttribute('id', 'content-string');
     contentDiv.innerHTML = contentString;
-    const singleStopDiv = singleStopDivTemplate.cloneNode(true);
+    const singleStopDiv = document.createElement('div');
+    singleStopDiv.setAttribute('id', 'singleStopDiv');
+    singleStopDiv.classList.add('singleStopDiv');
+    singleStopDiv.innerHTML = '<div class="close-button-div"><button id="closeSingleStopDivButton" class="close-button">&#x2716;</button></div>';
     singleStopDiv.appendChild(contentDiv);
-
 
     // singleStopInfoWindow.setContent(contentString);
     // singleStopInfoWindow.setZindex = 0;
