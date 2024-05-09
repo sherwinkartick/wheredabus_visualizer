@@ -11,7 +11,7 @@ This repository contains the Web UI for Wheredabus Visualizer, a debugging tool 
 
 ## Video
 
-https://github.com/sherwinkartick/wheredabus_visualizer/assets/1162671/a8cc6b34-396a-45da-a2e8-814de8718653
+https://github.com/sherwinkartick/wheredabus_visualizer/assets/1162671/7d3df481-4431-4cd2-b929-7a3ec35652c9
 
 ## Future Improvements
 
